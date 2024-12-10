@@ -1,8 +1,15 @@
-# Find the thirteen adjacent digits in the 1000-digit number that have the
-# greatest product. What is the value of this product?
-# Execution time: 0.223s
+# pylint: disable=line-too-long
+"""
+Problem 1: Find the thirteen adjacent digits in the 1000-digit number that have the
+           greatest product. What is the value of this product?
+Answer: 23514624000
+Execution time: 0.0030s
+"""
 
-num = '\
+import math
+from utils import profiler
+
+BIG_NUMBER = '\
 73167176531330624919225119674426574742355349194934\
 96983520312774506326239578318016984801869478851843\
 85861560789112949495459501737958331952853208805511\
@@ -24,18 +31,19 @@ num = '\
 05886116467109405077541002256983155200055935729725\
 71636269561882670428252483600823257530420752963450'
 
-biggest = 0
-i = 0
 
-while i < len(num) - 12:
-    product = 1
-    nums = [int(num[x]) for x in range(i, i+13)]
-    for n in nums:
-        product *= n
+@profiler
+def greatest_product(input_data: str) -> int:
+    """Find the biggest product of 12 adjacent characters"""
+    biggest_product = 0
 
-    if product > biggest:
-        biggest = product
-    i = i + 1
-    
-print(biggest)
+    for i in range(len(input_data) - 12):
+        product = math.prod([int(input_data[x]) for x in range(i, i + 13)])
+        if product > biggest_product:
+            biggest_product = product
 
+    return biggest_product
+
+
+if __name__ == "__main__":
+    print(f"Problem 8: {greatest_product(BIG_NUMBER)}")
