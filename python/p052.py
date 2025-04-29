@@ -13,3 +13,6 @@ while True:
     if same(x,1,2) and same(x,2,3) and same(x,3,4) and same(x,4,5) and same(x,5,6):
         print (x)
         break
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

@@ -1,8 +1,18 @@
-# What is the sum of the digits of the number 2^1000?
-# Execution time: 0.220s
+# pylint: disable=line-too-long
+"""
+Problem 16: What is the sum of the digits of the number 2^1000?
+Answer: 
+Execution time: 0.0000s
+"""
 
-def power_digit_sum():
-    print(sum([int(i) for i in str(2**1000)]))
+from utils import profiler
 
 
-power_digit_sum()
+@profiler
+def compute():
+    """Calculate big number cast to string and then a list and do a summation over all digits"""
+    return sum([int(i) for i in str(2**1000)])
+
+
+if __name__ == "__main__":
+    print(f"Problem 16: {compute()}")

@@ -98,3 +98,6 @@ for t in tri:
                         if first == last:
                             final_lst = [t, c1[0], c2[0], c3[0], c4[0], c5[0]]
                             print("Sum of cyclic list:", sum(final_lst))
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

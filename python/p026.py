@@ -23,3 +23,5 @@ for d in range(7, 1001):
         max_d = d
 
 print ("The d with the longest recurring cycle:", max_d)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

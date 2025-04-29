@@ -14,3 +14,5 @@ for p in primes[:len(primes)//2]:
         tot_primes += 1
 
 print("Total amount of circular primes:", tot_primes)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

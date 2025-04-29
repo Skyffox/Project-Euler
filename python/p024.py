@@ -17,3 +17,6 @@ for i in x:
     if counter == 1000000:
         print("".join(i))
         break
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

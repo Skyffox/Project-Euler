@@ -21,3 +21,5 @@ for i in range(2, roof):
 		result += i
 
 print(result)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

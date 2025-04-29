@@ -11,3 +11,5 @@ for a in range(2, 101):
 
 s = sorted(set(num_lst))
 print ("Amount of distinct numbers in the sequence:", len(s))
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

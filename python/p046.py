@@ -28,3 +28,6 @@ for x in range(3, n, 2):
     
     if not float(a).is_integer():
         print ("found answer", x, a)
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

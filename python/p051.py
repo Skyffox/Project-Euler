@@ -54,3 +54,6 @@ for num in primes_lst:
             if c == 8:
                 print("Smallest prime:", num)
                 break
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

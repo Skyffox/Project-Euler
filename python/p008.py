@@ -6,8 +6,9 @@ Answer: 23514624000
 Execution time: 0.0030s
 """
 
-import math
+from math import prod
 from utils import profiler
+
 
 BIG_NUMBER = '\
 73167176531330624919225119674426574742355349194934\
@@ -31,19 +32,17 @@ BIG_NUMBER = '\
 05886116467109405077541002256983155200055935729725\
 71636269561882670428252483600823257530420752963450'
 
-
 @profiler
-def greatest_product(input_data: str) -> int:
+def compute() -> int:
     """Find the biggest product of 12 adjacent characters"""
     biggest_product = 0
 
-    for i in range(len(input_data) - 12):
-        product = math.prod([int(input_data[x]) for x in range(i, i + 13)])
-        if product > biggest_product:
-            biggest_product = product
+    for i in range(len(BIG_NUMBER) - 12):
+        product = prod([int(BIG_NUMBER[x]) for x in range(i, i + 13)])
+        biggest_product = max(product, biggest_product)
 
     return biggest_product
 
 
 if __name__ == "__main__":
-    print(f"Problem 8: {greatest_product(BIG_NUMBER)}")
+    print(f"Problem 8: {compute()}")

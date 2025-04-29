@@ -8,9 +8,11 @@ Execution time: 0.0000s
 
 from utils import profiler
 
+
 @profiler
-def difference(n: int) -> int:
+def compute() -> int:
     """Difference between sum of squares and square of sum"""
+    n = 100
     square_sum = sum(x for x in range(1, n + 1))**2
     sum_square = sum(x**2 for x in range(1, n + 1))
 
@@ -18,4 +20,4 @@ def difference(n: int) -> int:
 
 
 if __name__ == "__main__":
-    print(f"Problem 6: {difference(100)}")
+    print(f"Problem 6: {compute()}")

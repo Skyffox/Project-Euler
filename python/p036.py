@@ -19,3 +19,5 @@ for y in potential:
         
 print ("Sum of double-base palindromes:", total)
     
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

@@ -46,3 +46,5 @@ for x in range(len_pri):
         break
 
 print(longest_sum, terms)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

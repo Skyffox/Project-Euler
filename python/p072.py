@@ -1,15 +1,22 @@
 # How many elements would be contained in the set of reduced proper fractions for d ≤ 1,000,000
 # Execution time: ???
 
-from helper import sieve_of_atkin
+from itertools import islice
 
-total = 0
-for d in range(2, 9):
-    p = sieve_of_atkin(d)
+def list_totients(n: int) -> list[int]:
+	result: list[int] = list(range(n + 1))
+	for i in range(2, len(result)):
+		if result[i] == i:  # i is prime
+			for j in range(i, len(result), i):
+				result[j] -= result[j] // i
+	return result
 
-    total += len(p)
 
-    print(p, d)
+def compute():
+	totients = list_totients(10**6)
+	ans = sum(islice(totients, 2, None))
+	return str(ans)
 
 
-print("Total of reduced proper fractions", total)
+if __name__ == "__main__":
+	print(compute())

@@ -1,17 +1,19 @@
-# Find the sum of the digits in the number 100!
-# Execution time: 0.214s
+# pylint: disable=line-too-long
+"""
+Problem 20: Find the sum of the digits in the number 100!
+Answer: 648
+Execution time: 0.0000s
+"""
 
-def equation(inputs):
-    counter = 1
-    for number in range(1, inputs + 1):
-        counter *= number
-    return counter
-
-
-def sumOfEquation():
-    indivNumbers = [int(i) for i in str(equation(100))]
-    return sum(indivNumbers)
+from math import prod
+from utils import profiler
 
 
-numSum = sumOfEquation()
-print ("The sum of the digits in the number 100!", str(numSum))
+@profiler
+def compute():
+    """Calculate the factorial of 100 and calculate the sum of its digits"""
+    return sum([int(i) for i in str(prod(list(range(1, 101))))])
+
+
+if __name__ == "__main__":
+    print(f"Problem 20: {compute()}")

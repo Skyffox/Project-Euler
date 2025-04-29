@@ -95,3 +95,5 @@ for i, first in enumerate(primes[:-4]):
 print("Lowest sum for a set of five primes:", ans)
 
 
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

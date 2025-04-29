@@ -15,3 +15,5 @@ for x in range(1, n):
             n_digit += 1
 
 print(n_digit)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

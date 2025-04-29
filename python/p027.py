@@ -45,3 +45,5 @@ product_coef = max_a * max_b
 print ("Longest consecutive number of primes", most_primes)
 print ("Most primes for a and b:", max_a, max_b)
 print ("The largest product coefficient is:", product_coef)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

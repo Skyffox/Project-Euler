@@ -31,3 +31,5 @@ for i, name in enumerate(names):
     total_count += (i+1) * count
 
 print("The value of all names is: " + str(total_count))
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

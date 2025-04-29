@@ -21,3 +21,5 @@ for p in range(1, 1001):
         max_p = p
 
 print ("Number of solutions maximised for:", max_p)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

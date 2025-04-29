@@ -35,3 +35,5 @@ for m in range(2, LIMIT):
                 p += a+b+c
 
 print("Triangles with a right angle:", result)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

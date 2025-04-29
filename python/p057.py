@@ -26,3 +26,5 @@ print("Amount of time numerator was greater than denominator:", c)
 
 
 
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

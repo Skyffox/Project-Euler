@@ -33,3 +33,5 @@ for n in range(2, 20000):
 
 # Print largest pandigital number.
 print(sorted([int(x) for x in outcomes])[-1])
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

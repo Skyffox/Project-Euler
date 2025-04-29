@@ -54,3 +54,5 @@ for i in range(2, LIMIT * 2 + 1):
 # Eliminate duplicates and compute sum
 ans = sum(set(minsumproduct[2:]))
 print(ans)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

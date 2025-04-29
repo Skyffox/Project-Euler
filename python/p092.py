@@ -35,3 +35,5 @@ for i in range(2, 10000000):
         eight_nine.append(start)
 
 print(len(set(eight_nine)))
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

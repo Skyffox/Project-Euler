@@ -19,3 +19,5 @@ for x in range(3, 100000):
         sum += x
         
 print ("Total for curious numbers:", sum)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

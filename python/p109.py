@@ -1,149 +1,35 @@
-# In the game of darts a player throws three darts at a target board which is split into twenty equal sized sections numbered one to twenty.
-# When a player is able to finish on their current score it is called a "checkout" and the highest checkout is 170: T20 T20 D25 (two treble 20s and double bull).
-# How many distinct ways can a player checkout with a score less than 100?
-# Execution time: 1.370s
+# pylint: disable=line-too-long
+"""
+Problem 109: In the game of darts a player throws three darts at a target board which is split into twenty equal sized sections numbered one to twenty.
+             When a player is able to finish on their current score it is called a "checkout" and the highest checkout is 170: T20 T20 D25 (two treble 20s and double bull).
+             How many distinct ways can a player checkout with a score less than 100?
+Answer: 38182
+Execution time: 0.9294s
+"""
 
-singles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-doubles = [x * 2 for x in singles]
-triples = [x * 3 for x in singles]
-
-# Bullseye
-singles.append(25)
-doubles.append(50)
-
-total = 0
-
-for checkout in range(2, 100):
-    solutions = []
-
-    # Only doubles
-    for first in doubles:
-        if checkout - first < 0: break
-        if checkout - first == 0:
-            x = first / 2
-            solutions.append(["D" + str(int(x))])
-
-    # First is single last is double
-    for first in singles:
-        if checkout - first < 0: break
-        for second in doubles:
-            if checkout - first - second < 0: break
-            if checkout - first - second == 0:
-                y = second / 2
-                solutions.append(["S" + str(first), "D" + str(int(y))])
-
-    # First is double last is double
-    for first in doubles:
-        if checkout - first < 0: break
-        for second in doubles:
-            if checkout - first - second < 0: break
-            if checkout - first - second == 0:
-                x = first / 2
-                y = second / 2
-                solutions.append(["D" + str(int(x)), "D" + str(int(y))])
-
-    # First is triple last is double
-    for first in triples:
-        if checkout - first < 0: break
-        for second in doubles:
-            if checkout - first - second < 0: break
-            if checkout - first - second == 0:
-                x = first / 3
-                y = second / 2
-                solutions.append(["T" + str(int(x)), "D" + str(int(y))])
-
-    # First is single second is single last is double
-    for first in singles:
-        if checkout - first < 0: break
-        for second in singles:
-            if checkout - first - second < 0: break
-            for third in doubles:
-                if checkout - first - second - third < 0: break
-                if checkout - first - second - third == 0:
-                    z = third / 2
-                    solutions.append(["S" + str(first), "S" + str(second), "D" + str(int(z))])
-
-    # First is single second is double last is double
-    for first in singles:
-        if checkout - first < 0: break
-        for second in doubles:
-            if checkout - first - second < 0: break
-            for third in doubles:
-                if checkout - first - second - third < 0: break
-                if checkout - first - second - third == 0:
-                    y = second / 2
-                    z = third / 2
-                    solutions.append(["S" + str(first), "D" + str(int(y)), "D" + str(int(z))])
-
-    # First is single second is triple last is double
-    for first in singles:
-        if checkout - first < 0: break
-        for second in triples:
-            if checkout - first - second < 0: break
-            for third in doubles:
-                if checkout - first - second - third < 0: break
-                if checkout - first - second - third == 0:
-                    y = second / 3
-                    z = third / 2
-                    solutions.append(["S" + str(first), "T" + str(int(y)), "D" + str(int(z))])
-
-    # First is double second is double last is double
-    for first in doubles:
-        if checkout - first < 0: break
-        for second in doubles:
-            if checkout - first - second < 0: break
-            for third in doubles:
-                if checkout - first - second - third < 0: break
-                if checkout - first - second - third == 0:
-                    x = first / 2
-                    y = second / 2
-                    z = third / 2
-                    solutions.append(["D" + str(int(x)), "D" + str(int(y)), "D" + str(int(z))])
-
-    # First is double second is triple last is double
-    for first in doubles:
-        if checkout - first < 0: break
-        for second in triples:
-            if checkout - first - second < 0: break
-            for third in doubles:
-                if checkout - first - second - third < 0: break
-                if checkout - first - second - third == 0:
-                    x = first / 2
-                    y = third / 3
-                    z = third / 2
-                    solutions.append(["D" + str(int(x)), "T" + str(int(y)), "D" + str(int(z))])
-
-    # First is triple second is triple last is double
-    for first in triples:
-        if checkout - first < 0: break
-        for second in triples:
-            if checkout - first - second < 0: break
-            for third in doubles:
-                if checkout - first - second - third < 0: break
-                if checkout - first - second - third == 0:
-                    x = first / 3
-                    y = second / 3
-                    z = third / 2
-                    solutions.append(["T" + str(int(x)), "T" + str(int(y)), "D" + str(int(z))])
+from utils import profiler
 
 
-    len3solutions = [sublst for sublst in solutions if len(sublst) == 3]
-    othersolutions = [sublst for sublst in solutions if len(sublst) != 3]
+@profiler
+def compute():
+    """Calculate for every possible checkout how we may achieve that in 1, 2 or 3 throws (since singles contains a zero throw)"""
+    singles = [("S" + str(i), i) for i in range(0, 21)] + [("S25", 25)]
+    doubles = [("D" + str(i), 2*i) for i in range(1, 21)] + [("D50", 50)]
+    triples = [("T" + str(i), 3*i) for i in range(1, 21)]
 
-    new_solutions = []
-    for sol in len3solutions:
-        first_two = sorted(sol[:2])
-        first_two.append(sol[2])
-        if first_two not in new_solutions:
-            new_solutions.append(first_two)
+    # The maximum checkout is 170 and a player must finish with a double
+    checkout = [[] for _ in range(171)]
+    for (letter_1, dart_1) in singles + doubles + triples:
+        for (letter_2, dart_2) in singles + doubles + triples:
+            for (letter_3, dart_3) in doubles:
+                total = dart_1 + dart_2 + dart_3
+                # The first and second dart may be interchanged to form a solution, which is why we check for one solution and add the other.
+                if (letter_2, letter_1, letter_3) not in checkout[total]:
+                    checkout[total].append((letter_1, letter_2, letter_3))
 
-    total += len(othersolutions) + len(new_solutions)
+    # Only interested in checkout scores with less than 100
+    return sum([len(x) for x in checkout[:100]])
 
-# Print the solutions
-# for sol in othersolutions:
-#     print(sol, end="\n")
-#
-# for sol in new_solutions:
-#     print(sol, end="\n")
 
-print("Number of solutions found:", total)
+if __name__ == "__main__":
+    print(f"Problem 109: {compute()}")

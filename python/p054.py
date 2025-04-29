@@ -128,3 +128,5 @@ with open('inputs/poker.txt', 'r') as f:
 
 print("Amount of wins for player 1:", player_1_wins)
 
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

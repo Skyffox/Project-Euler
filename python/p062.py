@@ -25,3 +25,6 @@ for i, cube1 in enumerate(cubes):
         break
 
 print("Digits with 5 permutations:", permutations)
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

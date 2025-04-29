@@ -1,8 +1,14 @@
-# Work out the first ten digits of the sum of the following one-hundred
-# 50-digit numbers.
-# Execution time: 0.215s
+# pylint: disable=line-too-long
+"""
+Problem 13: Work out the first ten digits of the sum of the following one-hundred 50-digit numbers.
+Answer: 
+Execution time: 0.0000s
+"""
 
-s = "37107287533902102798797998220837590246510135740250\n\
+from utils import profiler
+
+
+BIG_NUMBER = "37107287533902102798797998220837590246510135740250\n\
 46376937677490009712648124896970078050417018260538\n\
 74324986199524741059474233309513058123726617309629\n\
 91942213363574161572522430563301811072406154908250\n\
@@ -104,6 +110,11 @@ s = "37107287533902102798797998220837590246510135740250\n\
 53503534226472524250874054075591789781264330331690"
 
 
-sum_integer = str(sum([int(i) for i in s.split("\n")]))
-print(''.join([x for x in sum_integer][:10]))
+@profiler
+def compute():
+    """Add each line together and get the first ten letters from the answer"""
+    return ''.join(list(str(sum([int(i) for i in BIG_NUMBER.split("\n")])))[:10])
 
+
+if __name__ == "__main__":
+    print(f"Problem 13: {compute()}")

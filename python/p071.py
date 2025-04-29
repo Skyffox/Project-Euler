@@ -19,3 +19,6 @@ for q in range(UPPER_BOUND, 0, -1):
         s = q
 
 print("Answer:", r, s)
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

@@ -36,3 +36,5 @@ for i, tnum in enumerate(tri_nums):
                     print (found_tri_num)
                     print (i,k+j,j)
         
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

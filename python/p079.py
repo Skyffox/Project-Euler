@@ -42,3 +42,5 @@ for i in all_nums:
 lst = sorted(lst, key=lambda x: x[1])
 passcode = [i[0] for i in lst]
 print("Passcode:", passcode)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

@@ -53,3 +53,5 @@ for text in valid_txts:
         s += ord(letter)
 
 print ("sum of decrypted ascii values:", s)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

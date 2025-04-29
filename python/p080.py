@@ -18,3 +18,5 @@ for i in range(2, 100):
 # There is something wrong with this way and the library probably...
 print("Total of the digital sums is 40886")
 print("My total is:", s)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

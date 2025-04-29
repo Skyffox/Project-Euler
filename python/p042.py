@@ -31,3 +31,5 @@ with open("inputs/p042_words.txt", "r") as f:
             word_value = 0
 
 print ("Amount of triangle words in the file:", triangle_words)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

@@ -32,3 +32,5 @@ for i in range(3, 1002, 2):
     difference += 2
     
 print(sum)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

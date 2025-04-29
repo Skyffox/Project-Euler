@@ -28,3 +28,5 @@ def sum_pairs(pairs):
 
 
 print("Number of amicable pairs under 10000: " + str(sum_pairs(amicable_pairs(1, 10000))))
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

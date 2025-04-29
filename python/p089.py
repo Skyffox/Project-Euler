@@ -104,3 +104,5 @@ for line in f:
     total_saved += (len(lit) - (m + d + c + l + x + v + i))
 
 print(total_saved)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

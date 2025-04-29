@@ -49,3 +49,5 @@ for p in reversed_permu:
         break
 
 print("Maximum string:", tuples_to_num(solution))
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

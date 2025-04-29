@@ -8,15 +8,18 @@ Execution time: 0.0000s
 
 from utils import profiler
 
+
+LIMIT = 4000000
+
 @profiler
-def fibonacci_numbers(limit: int) -> int:
+def compute() -> int:
     """Generate a list of Fibonacci numbers"""
     lst = [1, 2]
     first = 1
     second = 2
     third = first + second
 
-    while third < limit:
+    while third < LIMIT:
         lst.append(third)
         first, second = second, third
         third = first + second
@@ -25,4 +28,4 @@ def fibonacci_numbers(limit: int) -> int:
 
 
 if __name__ == "__main__":
-    print(f"Problem 2: {fibonacci_numbers(4000000)}")
+    print(f"Problem 2: {compute()}")

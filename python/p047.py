@@ -67,3 +67,6 @@ for n in range(2, 150000):
 
 
 print("First number of four consecutive integers with four distinct primes:", solution)
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

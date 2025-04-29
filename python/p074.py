@@ -37,3 +37,5 @@ for i in range(2, 1000001):
         ans += 1
 
 print(ans)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

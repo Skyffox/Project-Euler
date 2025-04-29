@@ -2,77 +2,78 @@
 # By replacing each of the letters in the word CARE with 1, 2, 9, and 6 respectively, we form a square number: 1296 = 362. 
 # What is remarkable is that, by using the same digital substitutions, the anagram, RACE, also forms a square number: 9216 = 962.
 # What is the largest square number formed by any member of such a pair?
+
+# To solve this problem, we need to:
+# Convert each word into a unique representation (for example, sort the characters or use a signature like the sum of the characters' ASCII values).
+# Map those representations to square numbers.
+# Check for pairs of square numbers whose corresponding words are anagrams of each other.
+# Find the largest square number among these pairs.
+
+# Solution Strategy:
+# Generate Square Numbers: First, we'll generate a list of square numbers, as they will form the basis for checking the anagram pairs.
+# Sort and Check Anagrams: For each word, sort its letters and use this sorted string as a signature. This will help identify which words are anagrams of each other.
+# Map Words to Square Numbers: For each anagram group, check if they correspond to valid square numbers. We can do this by verifying if the numbers formed by the sorted letters of a word are perfect squares.
+# Find the Largest Pair: Among the valid anagram pairs of square numbers, find the largest square.
+
 # Execution time: ???
 
-f = open("p098_words.txt", "r")
+import math
 
-for words in f:
-    words = words.split(",")
-    words = [eval(x) for x in words]
+def is_perfect_square(n):
+    """Check if a number n is a perfect square."""
+    return int(math.sqrt(n)) ** 2 == n
 
+# Strings a and b must be anagrams of each other.
+def max_square_pair(a, b, index, assignments, isdigitused):
+	if index == len(a):
+		if      a[0] in assignments and assignments[a[0]] == 0 or \
+		        b[0] in assignments and assignments[b[0]] == 0:
+			return 0
+		
+		anum = 0
+		bnum = 0
+		for (x, y) in zip(a, b):
+			anum = anum * 10 + assignments[x]
+			bnum = bnum * 10 + assignments[y]
+		if is_perfect_square(anum) and is_perfect_square(bnum):
+			return max(anum, bnum)
+		else:
+			return 0
+	
+	elif a[index] in assignments:
+		return max_square_pair(a, b, index + 1, assignments, isdigitused)
+	
+	else:
+		result = 0
+		for i in range(10):
+			if not isdigitused[i]:
+				isdigitused[i] = True
+				assignments[a[index]] = i
+				result = max(max_square_pair(a, b, index + 1, assignments, isdigitused), result)
+				del assignments[a[index]]
+				isdigitused[i] = False
+		return result
 
-longest = max([len(i) for i in words])
-lst = [[] for x in range(0, longest)]
-[lst[len(i) - 1].append(i) for i in words]
+def compute():
+	with open("inputs/p098_words.txt", "r", encoding="utf-8") as file:
+		anagrams = {}
+		for words in file:
+			words = words.strip().split(",")
+			for word in words:
+				word = word.replace("\"", "")
+				print(word)
+				key = "".join(sorted(word))
+				if key not in anagrams:
+					anagrams[key] = []
+				anagrams[key].append(word)
 
-pairs = []
-for len_word in lst:
-    for word in len_word:
-        w1 = sorted(list(str(word)))
-        for word2 in len_word:
-            w2 = sorted(list(str(word2)))
-            if w1 == w2 and word != word2:
-                pairs.append((word, word2))
+	ans = 0
+	for (key, words) in anagrams.items():
+		for i in range(len(words)):
+			for j in range(i + 1, len(words)):
+				assignments = {}
+				ans = max(max_square_pair(words[i], words[j], 0, assignments, [False] * 10), ans)
+	return str(ans)
 
-real_pairs = []
-encountered = []
-for pair in pairs:
-    if pair[1] not in encountered:
-        real_pairs.append(pair)
-    encountered.append(pair[0])
-
-word_orders = []
-for pair in real_pairs:
-    word_list1 = list(str(pair[0]))
-    word_list2 = list(str(pair[1]))
-    word_order = [0] * len(word_list1)
-
-    for c1, letter in enumerate(word_list1):
-        for c2, find in enumerate(word_list2):
-            if letter == find:
-                word_order[c1] = c2
-                word_list2[c2] = "NA"
-                break
-
-    word_orders.append(word_order)
-
-choices = []
-for l in range(2, 10):
-    largest_number = 1
-    l1 = l - 1
-    while l > 0:
-        largest_number *= 9
-        l -= 1
-
-    low = int((10**l1)**0.5)
-    high = int(largest_number**0.5)
-    choices.append([i**2 for i in range(low, high) if i**2 > 10**l1])
-
-
-best = 0
-for order in word_orders:
-    squares = choices[len(order) - 2]
-    for s in squares:
-        s2 = list(str(s))
-        s2 = [int(i) for i in s2]
-        num = []
-        for o in order:
-            num.append(s2[o])
-
-        num2 = int("".join(map(str, num)))
-        if num2 in squares and num2 != s:
-            b = max(s, num2)
-            if b > best:
-                best = b
-
-print(best)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

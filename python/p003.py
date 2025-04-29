@@ -8,10 +8,12 @@ Execution time: 0.0000s
 
 from utils import profiler
 
+
 @profiler
-def largest_prime_number(limit: int) -> int:
+def compute() -> int:
     """Find the largest prime number till a certain limit"""
     i = 2
+    limit = 600851475143
     while i * i < limit:
         while limit % i == 0:
             limit //= i
@@ -21,4 +23,4 @@ def largest_prime_number(limit: int) -> int:
 
 
 if __name__ == "__main__":
-    print(f"Problem 3: {largest_prime_number(600851475143)}")
+    print(f"Problem 3: {compute()}")

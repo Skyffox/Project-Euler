@@ -7,8 +7,9 @@ Execution time: 0.0000s
 
 from utils import profiler
 
+
 @profiler
-def smallest_multiple() -> int:
+def compute() -> int:
     """
     Method is to start with a product of all prime numbers, such that that number is already 
     divisible by all prime numbers, the eventual total must then be a multiple of that number
@@ -24,4 +25,4 @@ def smallest_multiple() -> int:
 
 
 if __name__ == "__main__":
-    print(f"Problem 5: {smallest_multiple()}")
+    print(f"Problem 5: {compute()}")

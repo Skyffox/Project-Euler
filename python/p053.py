@@ -17,3 +17,6 @@ for n in range(1, 101):
             vals += 1
     
 print (vals)
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

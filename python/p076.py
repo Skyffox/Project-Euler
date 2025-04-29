@@ -16,3 +16,6 @@ def count(total, s, size):
 
 lst = list(range(1, 100))
 print(count(100, lst, len(lst)))
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

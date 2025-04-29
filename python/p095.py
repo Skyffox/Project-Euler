@@ -53,3 +53,5 @@ for i in range(2, 600000):
 
 print(best, best_lst)
 print("smallest member of longest list", min(best_lst))
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

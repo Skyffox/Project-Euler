@@ -52,3 +52,5 @@ for sub_lst in product_lst:
         primes.append(num)
 
 print (get_answer(primes))
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

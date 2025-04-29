@@ -33,3 +33,5 @@ for root in range(2, 10000):
         odd_periods += 1
 
 print(odd_periods)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

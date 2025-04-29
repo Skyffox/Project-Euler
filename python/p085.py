@@ -31,3 +31,6 @@ for i in range(3, 120):
 
 print("Best i and j:", best_i, best_j)
 print("Area then is:", best_i * best_j)
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

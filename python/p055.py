@@ -19,3 +19,5 @@ for n in range(10000):
         lynchrel_nums += 1
     
 print (lynchrel_nums)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

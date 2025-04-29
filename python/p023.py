@@ -53,3 +53,5 @@ for i in range(2, 28123):
         sums += i
 
 print(sums)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

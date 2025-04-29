@@ -15,3 +15,5 @@ for c in range(6):
     answer *= int(champ[10**c])
 
 print (answer)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

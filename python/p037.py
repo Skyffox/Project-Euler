@@ -34,3 +34,5 @@ while primes < 11:
     n += 1
     
 print ("Sum of eleven truncatable primes:", sum_primes)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

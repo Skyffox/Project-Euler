@@ -46,3 +46,5 @@ for n in range(10):
                 largest_prime = num
             
 print ("The largest n-digit pandigital prime is:", largest_prime)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

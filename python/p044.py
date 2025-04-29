@@ -16,3 +16,5 @@ for i, x in enumerate(p_num):
         break
 
 print("Minimised difference:", D)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

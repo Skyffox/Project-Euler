@@ -31,3 +31,5 @@ def count(total, s, size):
 
 print (count(total, s, siz))
 
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

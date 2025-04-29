@@ -12,3 +12,5 @@ for a in range(101):
             largest_s = s
 
 print (largest_s)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

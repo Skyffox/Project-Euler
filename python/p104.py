@@ -1,36 +1,44 @@
-# Given that Fk is the first Fibonacci number for which the first nine digits AND the last nine digits are 1-9 pandigital, find k.
-# Execution time: 13.114s
+# pylint: disable=line-too-long
+"""
+Problem 104: Given that Fk is the first Fibonacci number for which the first nine digits AND the last nine digits are 1-9 pandigital, find k.
+Answer: 329468
+Execution time: 11.8364s
+"""
 
-import math
+from math import log
+from utils import profiler
 
-# return first n characters
+
 def first_n_digits(num, n):
-    return num // 10 ** (int(math.log(num, 10)) - n + 1)
+    """Return the first n characters"""
+    return num // 10 ** (int(log(num, 10)) - n + 1)
 
-fib_1 = 1
-fib_2 = 1
-fib = 0
-it = 2
 
-# get last 9 characters
-tailcut = 1000000000
+@profiler
+def compute():
+    """
+    Compute fibonacci numbers that need to be pandigital for both the first 10 and last 10 letters
+    I calculate the first and last ten letters this way because I ran into the limit for converting integers into strings
+    """
+    fibnum_1 = 1
+    fibnum_2 = 1
+    fib = 0
+    iterator = 2
 
-while True:
-    it += 1
-    fib = fib_1 + fib_2
+    while True:
+        iterator += 1
+        fib = fibnum_1 + fibnum_2
 
-    tail = fib % tailcut
-    taillst = list(str(tail))
-
-    if sorted(taillst)  == ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
-        digits = 1 + math.log10(fib)
-        if digits > 9:
+        # Get last 9 characters
+        tail = fib % 10**9
+        if ''.join(sorted(str(tail))) == "123456789":
+            # Get the first 9 characters
             head = first_n_digits(fib, 9)
-            headlst = list(str(head))
+            if ''.join(sorted(str(head))) == "123456789":
+                return iterator
 
-            if sorted(headlst) == ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                print("First Fibonacci number with both pandigital:", it)
-                break
+        fibnum_2 = fibnum_1
+        fibnum_1 = fib
 
-    fib_2 = fib_1
-    fib_1 = fib
+if __name__ == "__main__":
+    print(f"Problem 104: {compute()}")

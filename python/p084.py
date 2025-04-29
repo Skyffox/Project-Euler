@@ -110,3 +110,6 @@ six_digit_modal_string = string1 + string2 + string3
 print(top_3)
 print(six_digit_modal_string)
 print(board)
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

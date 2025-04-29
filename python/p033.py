@@ -56,3 +56,5 @@ for x in range(10, 100):
 product_denom = simplify(combinations)
 
 print (product_denom)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

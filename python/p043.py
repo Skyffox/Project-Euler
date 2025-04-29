@@ -17,3 +17,5 @@ for num in pandigital_nums:
         s += int(''.join(list(num)))
 
 print(s)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

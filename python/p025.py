@@ -12,3 +12,5 @@ def fib_seq(x, y, counter):
 
 
 print(fib_seq(1, 1, 2))
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

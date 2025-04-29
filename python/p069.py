@@ -1,7 +1,7 @@
 # Find the value of n ≤ 1,000,000 for which n/phi(n) is a maximum.
 # Execution time: 0.215s
 
-from helper import sieve_of_atkin
+from utils import sieve_of_atkin
 
 UPPER_BOUND = 1000000
 sieve = sieve_of_atkin(100)
@@ -14,3 +14,5 @@ for i in sieve:
     if total > UPPER_BOUND:
         print("Greatest value of n for which n/phi(n) is maximum:", total/i)
         break
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

@@ -16,3 +16,5 @@ for i in range(len(t) - 2, -1, -1):
 
 
 print('Maximum path:', t[0][0])
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

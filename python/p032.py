@@ -22,3 +22,5 @@ for i in range(1, 50):
             total_product.append(product)
 
 print(sum(set(total_product)))
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

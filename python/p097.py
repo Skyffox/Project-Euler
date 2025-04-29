@@ -3,3 +3,6 @@
 # Execution time: 0.215s
 
 print((28433 * pow(2, 7830457, 10000000000) + 1) % 10000000000)
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

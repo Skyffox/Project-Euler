@@ -10,3 +10,6 @@ lst = list(str(total))
 digits = lst[-10:]
 ans = int(''.join(digits))
 print (ans)
+
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

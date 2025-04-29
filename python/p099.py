@@ -21,3 +21,5 @@ for it, line in enumerate(f):
         best_line = it + 1
 
 print(best_line)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")

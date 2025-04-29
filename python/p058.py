@@ -58,3 +58,5 @@ while True:
 
 # Minus 2 since counted starting width double.
 print("Length of the spiral when ratio of primes is below 10%:", width - 2)
+if __name__ == "__main__":
+    print(f"Problem 1: {compute()}")
