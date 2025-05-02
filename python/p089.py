@@ -1,108 +1,89 @@
-# Find the number of characters saved by writing each of these in their minimal form.
-# Execution time: 0.252s
+# pylint: disable=line-too-long
+"""
+Problem 89: Roman Numerals
 
-literals = {"I" : 1,
-"V" : 5,
-"X" : 10,
-"L" : 50,
-"C" : 100,
-"D" : 500,
-"M" : 1000 }
+Problem description:
+This module solves how many characters can be saved by converting Roman numerals in a given list to their minimal 
+form. The input is a list of Roman numerals, and the output is the total number of characters saved by 
+converting them to their minimal Roman numeral forms.
+
+Answer: 743
+"""
+
+from utils import profiler
 
 
-f = open('inputs/p089_roman.txt', 'r')
-total_saved = 0
-for line in f:
-    line = line.strip()
-    lit = [str(c) for c in line]
+@profiler
+def compute() -> int:
+    """
+    Computes the number of characters saved by converting Roman numerals
+    to their minimal form. It reads a list of Roman numerals from a file,
+    converts them to integer values, re-converts them to their minimal form,
+    and calculates how many characters are saved.
 
-    s = 0
-    for it, ele in enumerate(lit):
-        try:
-            if ele == "I" and (lit[it+1] == "V" or lit[it+1] == "X"):
-                s -= 1
-                continue
+    Returns:
+        int: The total number of characters saved.
+    """
+    # Dictionary mapping Roman numerals to their corresponding values
+    literals = {
+        "I": 1,
+        "V": 5,
+        "X": 10,
+        "L": 50,
+        "C": 100,
+        "D": 500,
+        "M": 1000
+    }
 
-            if ele == "X" and (lit[it+1] == "L" or lit[it+1] == "C"):
-                s -= 10
-                continue
+    # Mapping of integer values to Roman numerals
+    roman_map = [
+        (1000, "M"), (900, "CM"), (500, "D"), (400, "CD"),
+        (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
+        (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")
+    ]
 
-            if ele == "C" and (lit[it+1] == "D" or lit[it+1] == "M"):
-                s -= 100
-                continue
-        except:
-            pass
+    # Convert a Roman numeral string to an integer
+    def roman_to_int(roman: str) -> int:
+        total = 0
+        prev_value = 0
+        for char in reversed(roman):
+            value = literals[char]
+            if value < prev_value:
+                total -= value # Subtraction rule (IV, IX, etc.)
+            else:
+                total += value
+            prev_value = value
+        return total
 
-        s += literals[ele]
+    # Convert an integer to its minimal Roman numeral form
+    def int_to_roman(num: int) -> str:
+        roman = ""
+        for value, symbol in roman_map:
+            while num >= value:
+                roman += symbol
+                num -= value
+        return roman
 
-    m = 0
-    d = 0
-    c = 0
-    l = 0
-    x = 0
-    v = 0
-    i = 0
+    # Read the file and process the Roman numerals
+    with open('inputs/p089_roman.txt', 'r', encoding="utf-8") as f:
+        total_saved = 0
+        for line in f:
+            line = line.strip()
 
-    while s >= 1000:
-        m += 1
-        s -= 1000
+            # Get the original length of the Roman numeral
+            original_length = len(line)
 
-    if s >= 900:
-        c += 1
-        m += 1
-        s -= 900
+            # Convert the Roman numeral to an integer
+            integer_value = roman_to_int(line)
 
-    while s >= 500:
-        d += 1
-        s -= 500
+            # Convert the integer back to its minimal Roman numeral form
+            minimal_roman = int_to_roman(integer_value)
 
-    if s >= 400:
-        c += 1
-        d += 1
-        s -= 400
+            # Count the number of characters saved
+            total_saved += (original_length - len(minimal_roman))
 
-    while s >= 100:
-        c += 1
-        s -= 100
+    return total_saved
 
-    if s >= 90:
-        x += 1
-        c += 1
-        s -= 90
 
-    while s >= 50:
-        l += 1
-        s -= 50
-
-    if s >= 40:
-        x += 1
-        l += 1
-        s -= 40
-
-    while s >= 10:
-        x += 1
-        s -= 10
-
-    if s >= 9:
-        i += 1
-        x += 1
-        s -= 9
-
-    while s >= 5:
-        v += 1
-        s -= 5
-
-    if s >= 4:
-        i += 1
-        v += 1
-        s -= 4
-
-    while s >= 1:
-        i += 1
-        s -= 1
-
-    total_saved += (len(lit) - (m + d + c + l + x + v + i))
-
-print(total_saved)
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 89: {compute()}")

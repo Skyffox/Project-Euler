@@ -1,57 +1,74 @@
-# A perfect number is a number for which the sum of its proper divisors is
-# exactly equal to the number. For example, the sum of the proper divisors of
-# 28 would be 1 + 2 + 4 + 7 + 14 = 28, which means that 28 is a perfect number.
+# pylint: disable=line-too-long
+"""
+Problem 23: Non-Abundant Sums
 
-# A number n is called deficient if the sum of its proper divisors is less than
-# n and it is called abundant if this sum exceeds n.
+Problem description:
+A perfect number is a number for which the sum of its proper divisors is exactly equal to the number.
+For example, the sum of the proper divisors of 28 is 1 + 2 + 4 + 7 + 14 = 28, which means that 28 is a perfect number.
 
-# As 12 is the smallest abundant number, 1 + 2 + 3 + 4 + 6 = 16, the smallest
-# number that can be written as the sum of two abundant numbers is 24. By
-# mathematical analysis, it can be shown that all integers greater than 28123
-# can be written as the sum of two abundant numbers. However, this upper limit
-# cannot be reduced any further by analysis even though it is known that the
-# greatest number that cannot be expressed as the sum of two abundant numbers
-# is less than this limit.
+A number n is called deficient if the sum of its proper divisors is less than n, and it is called abundant if this sum exceeds n.
 
-# Find the sum of all the positive integers which cannot be written as the sum
-# of two abundant numbers.
-# Execution time: 7.764s
+As 12 is the smallest abundant number, 1 + 2 + 3 + 4 + 6 = 16, the smallest number that can be written as the sum of two
+abundant numbers is 24. By mathematical analysis, it can be shown that all integers greater than 28123 can be written as the
+sum of two abundant numbers.
 
-def get_sum_of_divs(n):
-    i = 2
-    upper = n
+Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
+
+Answer: 4179871
+"""
+
+from math import isqrt
+from utils import profiler
+
+
+def is_abundant(n: int) -> bool:
+    """
+    Determines if a number n is abundant.
+
+    Args:
+        n (int): The number to check for abundance.
+
+    Returns:
+        bool: True if n is abundant, False otherwise.
+    """
     total = 1
-    while i < upper:
+    for i in range(2, isqrt(n) + 1):
         if n % i == 0:
-            upper = n / i
-            total += upper
-            if upper != i:
-                total += i
-        i += 1
-    return total
+            total += i
+            if i != n // i:
+                total += n // i
+
+    return total > n
 
 
-def is_abundant(n):
-    return get_sum_of_divs(n) > n
+@profiler
+def compute() -> int:
+    """
+    Computes the sum of all positive integers that cannot be written as the sum of two abundant numbers.
 
+    Returns:
+        int: The sum of all positive integers that cannot be expressed as the sum of two abundant numbers.
+    """
+    limit = 28123
 
-lAbundants = [x for x in range(12, 28123) if is_abundant(x) == True]
-dAbundants = {x: x for x in lAbundants}
+    # Generate list of abundant numbers
+    abundants = [i for i in range(12, limit + 1) if is_abundant(i)]
 
-sums = 1
-for i in range(2, 28123):
-    boo = True
-    for k in lAbundants:
-        if k < i:
-            if (i - k) in dAbundants:
-                boo = False
+    # Create a boolean array to mark numbers that can be written as the sum of two abundant numbers
+    can_be_written = [False] * (limit + 1)
+
+    # Mark sums of two abundant numbers
+    for i, a in enumerate(abundants):
+        for _, b in enumerate(abundants[i:], start=i):  # Start j from i to avoid redundant pairs
+            s = a + b
+            if s <= limit:
+                can_be_written[s] = True
+            else:
                 break
-        else:
-            break
 
-    if boo:
-        sums += i
+    # Sum numbers that cannot be written as the sum of two abundant numbers
+    return sum(i for i, x in enumerate(can_be_written) if not x)
 
-print(sums)
+
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 23: {compute()}")

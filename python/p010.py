@@ -1,6 +1,10 @@
-# pylint: disable=line-too-long, no-name-in-module
+# pylint: disable=no-name-in-module, line-too-long
 """
-Problem 1: Find the sum of all the primes below two million.
+Problem 10: Summation of Primes
+
+Problem description:
+Find the sum of all the primes below two million.
+
 Answer: 142913828922
 """
 
@@ -8,9 +12,16 @@ from utils import sieve_of_atkin, profiler
 
 
 @profiler
-def compute():
-    """Generate a list of prime number to a maximum of 2m"""
-    return sum(sieve_of_atkin(2000000))
+def compute() -> int:
+    """
+    Sum all primes below two million using an efficient sieve.
+    
+    Returns:
+        int: The sum of all prime numbers below two million.
+    """
+    limit = 2000000
+    primes = sieve_of_atkin(limit)
+    return sum(primes)
 
 
 if __name__ == "__main__":

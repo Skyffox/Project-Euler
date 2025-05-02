@@ -1,57 +1,82 @@
-# You need to:
+# pylint: disable=line-too-long
+"""
+Problem 78: Coin Partitions
 
-# Calculate the number of partitions p(n) for each n.
-# Find the first n where p(n) % 1,000,000 == 0.
-# To solve this, we use a recurrence relation for partition numbers, where:
+Problem description:
+We are tasked with finding the first number n such that the partition number p(n)
+is divisible by 1,000,000. The partition function p(n) gives the number of ways
+an integer n can be written as the sum of positive integers.
 
-# p(n)=∑k=1 n (−1)^(k−1) p(n−k(3k−1)/2)−(−1)^k p(n−k(3k+1)/2)
+We use the recurrence relation derived from Euler's Pentagonal Number Theorem to compute
+partition numbers efficiently.
 
-# The formula I used to compute the partition numbers is derived from a combinatorial identity known as Euler's Pentagonal Number Theorem.
-# The partition function 𝑝(𝑛) represents the number of ways an integer 𝑛 can be written as a sum of positive integers, where the order of the addends does not matter.
-# https://en.wikipedia.org/wiki/Pentagonal_number_theorem
+Answer: 55374
+"""
 
-# This function calculates the partition numbers p(n) for each n up to a specified limit. 
-# The recurrence relation for partition numbers is used here. It also handles pentagonal 
-# numbers as part of the recurrence and keeps the result modulo 1,000,000 to ensure we don't encounter overflow issues.
-def partition_numbers(limit):
-    """Return the partition numbers p(n) for all n up to the given limit."""
-    p = [0] * (limit + 1)
-    p[0] = 1  # Base case: there is one way to partition 0 (the empty sum)
+from typing import List
+from utils import profiler
+
+
+def partition_numbers(limit: int)  -> List[int]:
+    """
+    Calculate partition numbers p(n) for all n up to the given limit using Euler's Pentagonal Number Theorem.
     
+    Args:
+        limit (int): The upper limit up to which partition numbers are calculated.
+    
+    Returns:
+        list: A list where p[n] is the partition number for n, modulo 1,000,000.
+    """
+    # Initialize the list to store partition numbers with base case p(0) = 1.
+    p = [0] * (limit + 1)
+    p[0] = 1 # Base case: there's exactly one way to partition 0 (the empty sum).
+
     for n in range(1, limit + 1):
         total = 0
         k = 1
         while True:
-            # Generalized pentagonal numbers
+            # Generalized pentagonal numbers: k * (3k - 1) / 2 and k * (3k + 1) / 2
             pentagonal1 = k * (3 * k - 1) // 2
             pentagonal2 = k * (3 * k + 1) // 2
-            
+
+            # Break if the pentagonal numbers exceed n
             if pentagonal1 > n:
                 break
 
-            # Add the partitions for pentagonal numbers
+            # Calculate the contribution of the current pentagonal numbers
             sign1 = -1 if k % 2 == 0 else 1
             total += sign1 * p[n - pentagonal1]
-            
+
             if pentagonal2 <= n:
                 sign2 = -1 if k % 2 == 0 else 1
                 total += sign2 * p[n - pentagonal2]
-            
+
             k += 1
-        
-        p[n] = total % 1000000  # Keep numbers mod 1,000,000 to avoid overflow
-    
+
+        # Store the partition number modulo 1,000,000
+        p[n] = total % 1000000
+
     return p
 
-def compute():
-    """Find the first number n for which p(n) is divisible by n_modulo."""
-    limit = 100000  # Set a large limit to search for the partition number
-    partitions = partition_numbers(limit)
+
+@profiler
+def compute() -> int:
+    """
+    Find the first number n for which the partition number p(n) is divisible by 1,000,000.
     
+    Returns:
+        int: The first number n where p(n) % 1,000,000 == 0.
+    """
+    limit = 100000
+    partitions = partition_numbers(limit)
+
+    # Search for the first n where p(n) % 1,000,000 == 0
     for n in range(1, limit + 1):
-        if partitions[n] == 0:
+        if partitions[n] == 0: # p(n) is divisible by 1,000,000
             return n
+
     return None
 
+
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 78: {compute()}")

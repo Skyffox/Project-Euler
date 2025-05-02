@@ -1,96 +1,83 @@
-# Find the value of D ≤ 1000 in minimal solutions of x for which the largest value of x is obtained.
-# Equation: x^2 - Dy^2 = 1
-# Execution time: ???
+# pylint: disable=line-too-long
+"""
+Problem 66: Diophantine Equation
 
+Problem description:
+This module solves the Diophantine equation of the form x^2 - Dy^2 = 1, known as Pell's equation,
+for values of D up to a given limit (in this case, D ≤ 1000). The goal is to find the value of D
+that produces the largest solution for x.
 
-# The following is the algorithm for solving “Pell's equation”, x2 – Ny2 = 1, as given by the Indian mathematicians who were the first to solve this equation:
-
-# For the given value of N (which is not a perfect square) replace x by a, y by b and 1 by k and solve the equation a2 – Nb2 = k. Let the initial value of b be 1 and select the initial value of a such that the square of the number is as close to N as possible so as to get the least absolute value of k. Note that k may be either positive or negative but not zero.
-# Now select an integer m such that k divides a + bm and the absolute value of m2 – N is minimum.
-# Now replace a by the absolute value of (am + Nb)/k and b by the absolute value of (a + bm)/k.
-# Now replace k by a2 – Nb2. Note that k may be either positive or negative but not zero.
-# If the new value of k is 1 we have got the solution. The value of x is a and that of y is b.
-# If the value of k is not equal to 1 we go for the first iteration and repeat steps 1 to 5. We keep on doing this until the value of k becomes 1 and we thus get the values of x and y which satisfies “Pell's equation” for the given value of N.
-# Using Brahmagupta's lemma, if the value of k assumes a value of -1 or ± 2 for any value of a and b or if the value of k assumes a value of ± 4 and either a or b is an even number, we can stop further iterations and compose the triple with itself to get the final solution.
-# a2 – Nb2 = k     ==>     {(a2 + Nb2)/k}2 – N{(ab)/k}2 = 1
-
-
-# Pell's Equation Background:
-# The equation 
-# 𝑥
-# 2
-# −
-# 𝐷
-# 𝑦
-# 2
-# =
-# 1
-# x 
-# 2
-#  −Dy 
-# 2
-#  =1 is known as Pell's equation. The solutions 
-# 𝑥
-# x and 
-# 𝑦
-# y are positive integers, and the smallest solution 
-# (
-# 𝑥
-# 1
-# ,
-# 𝑦
-# 1
-# )
-# (x 
-# 1
-# ​
-#  ,y 
-# 1
-# ​
-#  ) can be found using continued fractions to approximate the square root of 
-# 𝐷
-# D. Once we find the smallest solution, larger solutions can be generated iteratively.
-
+Answer: 661
+"""
 
 import math
+from utils import profiler
 
-# Function to check if a number is a perfect square
-def is_perfect_square(n):
+
+def is_perfect_square(n: int) -> bool:
+    """
+    Checks if a given number is a perfect square.
+
+    Args:
+        n (int): The number to check.
+
+    Returns:
+        bool: True if n is a perfect square, False otherwise.
+    """
     return int(math.isqrt(n))**2 == n
 
-# Function to solve Pell's equation for a given D
-def solve_pells_equation(D):
+
+def solve_pells_equation(D: int) -> int:
+    """
+    Solves Pell's equation x^2 - Dy^2 = 1 for a given non-perfect-square D
+    using continued fraction expansion to find the minimal solution (x, y).
+
+    Args:
+        D (int): The value for which Pell's equation is solved.
+
+    Returns:
+        int or None: The minimal value of x that satisfies the equation, or None if no solution exists (D is a perfect square).
+    """
     m, d, a = 0, 1, int(math.isqrt(D))
     if a * a == D:
-        return None  # No solution if D is a perfect square
+        return None # No solution if D is a perfect square
+
     num1, num2 = 1, a
     denom1, denom2 = 0, 1
+
+    # Using continued fraction expansion method
     while num2 * num2 - D * denom2 * denom2 != 1:
         m = d * a - m
         d = (D - m * m) // d
         a = (int(math.isqrt(D)) + m) // d
         num1, num2 = num2, a * num2 + num1
         denom1, denom2 = denom2, a * denom2 + denom1
-    return num2  # Return the minimal x
 
-# Find the value of D for which the equation has the largest x
-def find_max_x(limit):
+    return num2 # Return the minimal x
+
+
+@profiler
+def compute() -> int:
+    """
+    Finds the value of D that produces the largest solution for x in Pell's equation 
+    x^2 - Dy^2 = 1 for D ≤ limit.
+
+    Returns:
+        int: The value of D that produces the largest x.
+    """
+    limit = 1000  # Set the upper bound for D
     max_x = 0
     best_d = 0
+
     for D in range(2, limit + 1):
         if not is_perfect_square(D):
             x = solve_pells_equation(D)
             if x and x > max_x:
                 max_x = x
                 best_d = D
+
     return best_d
 
-# Set the limit (D <= 1000)
-limit = 1000
-
-# Get the result
-result = find_max_x(limit)
-print(result)
 
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 66: {compute()}")

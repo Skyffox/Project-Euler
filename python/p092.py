@@ -1,39 +1,69 @@
-# A number chain is created by continuously adding the square of the digits in a number to form a new number until it has been seen before.
-# How many starting numbers below ten million will arrive at 89?
-# Execution time: 87.540s
+# pylint: disable=line-too-long
+"""
+Problem 92: Square Digit Chains
 
-def square_digits(n):
-    total = 0
-    while n > 0:
-        digit = int(n % 10)
-        total += digit*digit
-        n = int(n / 10)
+Problem description:
+A number chain is created by continuously adding the square of the digits of a number 
+to form a new number, until it repeats. Find how many starting numbers below ten million 
+will arrive at 89.
 
-    return total
+Answer: 8581146
+"""
 
-eight_nine = []
-all1 = []
-all2 = []
-for i in range(2, 10000000):
-    start = i
-    l1 = []
-    l2 = []
-    while i != 89 and i != 1:
-        i = square_digits(i)
-        l1.append(i)
-        l2.append(i)
+from utils import profiler
 
-        if i in all1:
-            all1.extend(l1)
-            eight_nine.append(start)
-            break
-        if i in all2:
-            all2.extend(l2)
-            break
 
-    if i == 89:
-        eight_nine.append(start)
+def square_digits(n: int) -> int:
+    """
+    Returns the sum of the squares of the digits of a given number.
 
-print(len(set(eight_nine)))
+    For example:
+    - square_digits(9119) returns 1^2 + 1^2 + 9^2 + 9^2 = 1 + 1 + 81 + 81 = 164.
+    
+    Args:
+        n (int): The number whose digits will be squared.
+
+    Returns:
+        int: The sum of the squares of the digits of n.
+    """
+    return sum(int(digit) ** 2 for digit in str(n))
+
+
+@profiler
+def compute() -> int:
+    """
+    Computes how many numbers below 10 million eventually reach 89 in their square digit chains.
+    
+    Uses memoization to avoid recalculating known chains.
+    
+    Returns:
+        int: Count of numbers whose chain ends at 89.
+    """
+    known_to_89 = set()
+    known_to_1 = set()
+
+    def follows_chain_to_89(n: int) -> bool:
+        """Determines whether a number ends in 89 by following the chain of square digit sums."""
+        chain = set()
+        while n != 1 and n != 89:
+            if n in known_to_89:
+                known_to_89.update(chain)
+                return True
+            if n in known_to_1:
+                known_to_1.update(chain)
+                return False
+            chain.add(n)
+            n = square_digits(n)
+
+        if n == 89:
+            known_to_89.update(chain)
+            return True
+        else:
+            known_to_1.update(chain)
+            return False
+
+    return sum(1 for i in range(2, 10_000_000) if follows_chain_to_89(i))
+
+
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 92: {compute()}")

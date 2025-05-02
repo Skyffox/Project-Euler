@@ -1,35 +1,61 @@
-# In England the currency is made up of pound, £, and pence, p, and there are
-# eight coins in general circulation:
-# 1p, 2p, 5p, 10p, 20p, 50p, £1 (100p) and £2 (200p).
+# pylint: disable=line-too-long
+"""
+Problem 31: Coin Sums
 
-# It is possible to make £2 in the following way:
-# 1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
+Problem description:
+In England, the currency is made up of pounds (£) and pence (p). There are eight coins in general circulation:
+    1p, 2p, 5p, 10p, 20p, 50p, £1 (100p), and £2 (200p).
 
-# How many different ways can £2 be made using any number of coins?
-# Execution time: 0.254s
+It is possible to make £2 in the following way:
+    1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
 
-# Amount of money we have
-total = 200
-# All the possible combinations
-s = [1,2,5,10,20,50,100,200]
-# Amount of different currencies
-siz = 8
+How many different ways can £2 be made using any number of coins?
+
+Answer: 73682
+"""
+
+from typing import List
+from utils import profiler
 
 
-# Return 1 when a combination can be made otherwise return 0
-def count(total, s, size):
-    if (total < 0):
-        return 0
-    if (total == 0):
-        return 1
-    if (size == 1):
-        return 1
-    else:
-        # Go through each possible combination
-        return count(total, s, size-1) + count(total-s[size-1], s, size)
+def count_ways_to_make_change(total: int, coins: List[int]) -> int:
+    """
+    Counts the number of ways to make a given total using a list of available coin denominations.
     
+    This function uses a dynamic programming approach to count the ways to make change for a given total.
+    It iterates through each coin denomination and updates the possible ways to form the total.
+    
+    Args:
+        total (int): The total amount to be made (in pence).
+        coins (list of int): The list of coin denominations available.
 
-print (count(total, s, siz))
+    Returns:
+        int: The number of ways to make the total using the given coin denominations.
+    """
+    # Initialize a list to store the number of ways to make each value from 0 to total
+    ways = [0] * (total + 1)
+    ways[0] = 1 # There is 1 way to make 0 (using no coins)
+
+    for coin in coins:
+        # Update the ways to make each value from coin to total
+        for i in range(coin, total + 1):
+            ways[i] += ways[i - coin]
+
+    return ways[total]
+
+
+@profiler
+def compute() -> int:
+    """
+    Computes the number of different ways to make £2 using any number of coins.
+
+    Returns:
+        int: The number of ways to make £2 using the available coins.
+    """
+    total = 200  # Total value of £2 in pence
+    coins = [1, 2, 5, 10, 20, 50, 100, 200]  # Available coin denominations in pence
+    return count_ways_to_make_change(total, coins)
+
 
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 31: {compute()}")

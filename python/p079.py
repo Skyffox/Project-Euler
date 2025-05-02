@@ -1,46 +1,56 @@
-# Given that the three characters are always asked for in order, analyse the file so as to determine the shortest possible secret passcode of unknown length.
-# Execution time: 0.233s
+# pylint: disable=line-too-long
+"""
+Problem 79: Passcode Derivation
 
-f = open('inputs/p079_keylog.txt', 'r')
+Problem description:
+Given a file containing a series of 3-digit numbers, where the digits are always in order, 
+the task is to determine the shortest possible secret passcode of unknown length. 
+The passcode is formed by determining the minimum sequence of digits required to satisfy the given constraints.
 
-keys = []
-for line in f:
-    line = line.strip()
-    keys.append(int(line))
+Answer: 73162890
+"""
 
-keys = sorted(list(set(keys)))
-
-first = []
-second = []
-third = []
-for key in keys:
-    first.append(int(str(key)[0:1]))
-    second.append(int(str(key)[1:2]))
-    third.append(int(str(key)[2:3]))
+from utils import profiler
 
 
-permutations = []
-for it, x in enumerate(first):
-    permutations.append([x, second[it]])
-    permutations.append([x, third[it]])
-    permutations.append([second[it], third[it]])
+@profiler
+def compute() -> str:
+    """
+    Analyzes the given input to determine the shortest possible secret passcode.
+    
+    Returns:
+        str: The shortest possible passcode formed from the input.
+    """
+    # Open and read the input file
+    with open('inputs/p079_keylog.txt', 'r', encoding="utf-8") as f:
+        keys = [line.strip() for line in f]
 
-# Remove duplicates
-fnl = [list(i) for i in set(map(tuple, permutations))]
-all_nums = list(set(first + second + third))
+    # Create a set of unique digits from the input
+    all_digits = set(''.join(keys)) # All unique digits involved in the keys
 
-# From here on out we create a new list which checks how many characters come
-# before the current character, then we sort the list on the least characters.
-lst = []
-for i in all_nums:
-    length = 0
-    for j in fnl:
-        if i == j[1]:
-            length += 1
-    lst.append([i, length])
+    # Initialize a list of pairs representing constraints (e.g., first digit must come before second digit)
+    constraints = []
+    for key in keys:
+        constraints.append([key[0], key[1]]) # first digit before second digit
+        constraints.append([key[1], key[2]]) # second digit before third digit
+        constraints.append([key[0], key[2]]) # first digit before third digit
 
-lst = sorted(lst, key=lambda x: x[1])
-passcode = [i[0] for i in lst]
-print("Passcode:", passcode)
+    # Remove duplicate constraints
+    constraints = [list(pair) for pair in set(map(tuple, constraints))]
+
+    # Count how many times each digit is constrained to appear before another digit
+    digit_order = {digit: 0 for digit in all_digits}
+    for constraint in constraints:
+        digit_order[constraint[1]] += 1
+
+    # Sort digits based on the number of constraints (digits with fewer constraints come earlier)
+    sorted_digits = sorted(digit_order.items(), key=lambda x: x[1])
+
+    # The final passcode is the sorted sequence of digits based on the constraint analysis
+    passcode = ''.join([digit[0] for digit in sorted_digits])
+
+    return int(passcode)
+
+
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 79: {compute()}")

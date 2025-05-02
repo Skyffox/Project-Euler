@@ -1,59 +1,62 @@
+"""
+Problem 100: Arranged probabilities
+-----------------------------------
+In a box, there are blue and red discs. A player draws two blue discs from the box. 
+The probability of selecting two blue discs is:
+
+    b / (b + r) * (b - 1) / (b + r - 1) = 1 / 2,
+
+where `b` represents the number of blue discs and `r` represents the number of red discs. 
+We are tasked with finding the smallest number of blue discs `b` such that the total number 
+of discs `b + r` exceeds 10^12 and the probability of selecting two blue discs is exactly 1/2.
+
+Answer: 756872327473
+"""
+
 import math
+from utils import profiler
 
-
-# Suppose the box has b blue discs and r red discs.
-# The probability of taking 2 blue discs is [b / (b + r)] * [(b - 1) / (b + r - 1)],
-# which we want to be equal to 1/2. Rearrange the equation:
-#   [b(b - 1)] / [(b + r)(b + r - 1)] = 1 / 2.
-#   2b(b - 1) = (b + r)(b + r - 1).
-#   2b^2 - 2b = b^2 + br - b + br + r^2 - r.
-#   b^2 - b = r^2 + 2br - r.
-#   b^2 - (2r + 1)b + (r - r^2) = 0.
-# Apply the quadratic equation to solve for b:
-#   b = [(2r + 1) +/- sqrt((2r + 1)^2 - 4(r - r^2))] / 2
-#     = r + [1 +/- sqrt(8r^2 + 1)]/2
-#     = r + [sqrt(8r^2 + 1) + 1]/2.  (Discard the minus solution because it would make b < r)
-# 
-# For b to be an integer, we need sqrt(8r^2 + 1) to be odd, and also 8r^2 + 1 be a perfect square.
-# Assume 8y^2 + 1 = x^2 for some integer x > 0.
-# We can see this is in fact a Pell's equation: x^2 - 8y^2 = 1.
-# 
-# Suppose we have the solution (x0, y0) such that x0 > 0 and x0 is as small as possible.
-# This is called the fundamental solution, and all other solutions be derived from it (proven elsewhere).
-# Suppose (x0, y0) and (x1, y1) are solutions. Then we have:
-#   x0^2 - 8*y0^2 = 1.
-#   (x0 + y0*sqrt(8))(x0 - y0*sqrt(8)) = 1.
-#   (x1 + y1*sqrt(8))(x1 - y1*sqrt(8)) = 1.  (Similarly)
-# Multiply them together:
-#   [(x0 + y0*sqrt(8))(x0 - y0*sqrt(8))][(x1 + y1*sqrt(8))(x1 - y1*sqrt(8))] = 1 * 1.
-#   [(x0 + y0*sqrt(8))(x1 + y1*sqrt(8))][(x0 - y0*sqrt(8))(x1 - y1*sqrt(8))] = 1.
-#   [x0*x1 + x0*y1*sqrt(8) + x1*y0*sqrt(8) + 8y0*y1][x0*x1 - x0*y1*sqrt(8) - x1*y0*sqrt(8) + 8y0*y1] = 1.
-#   [(x0*x1 + 8y0*y1) + (x0*y1 + x1*y0)*sqrt(8)][(x0*x1 + 8y0*y1) - (x0*y1 + x1*y0)*sqrt(8)] = 1.
-#   (x0*x1 + 8y0*y1)^2 - 8*(x0*y1 + x1*y0)^2 = 1.
-# Therefore (x0*x1 + 8y0*y1, x0*y1 + x1*y0) is also a solution.
-# By inspection, the fundamental solution is (3, 1).
+@profiler
 def compute():
-	# Fundamental solution
-	x0 = 3
-	y0 = 1
-	
-	# Current solution
-	x = x0
-	y = y0  # An alias for the number of red discs
-	while True:
-		# Check if this solution is acceptable
-		sqrt = math.isqrt(y**2 * 8 + 1)
-		if sqrt % 2 == 1:  # Is odd
-			blue = (sqrt + 1) // 2 + y
-			if blue + y > 10**12:
-				return str(blue)
-		
-		# Create the next bigger solution
-		nextx = x * x0 + y * y0 * 8
-		nexty = x * y0 + y * x0
-		x = nextx
-		y = nexty
+    """
+    This function finds the number of blue discs (b) for the first solution to the equation 
+    derived from the probability condition where the total number of discs (blue + red) exceeds 
+    10^12, and the probability of selecting two blue discs is exactly 1/2.
+    
+    The problem is formulated as a Pell's equation: x^2 - 8y^2 = 1. Using the fundamental 
+    solution to this equation (x0, y0) = (3, 1), we can generate successive solutions 
+    and check when the sum of blue and red discs exceeds 10^12.
+    
+    Returns:
+        str: The number of blue discs for the first valid solution.
+    """
+    # Fundamental solution to the Pell's equation
+    x0 = 3
+    y0 = 1
+
+    # Current solution for x (blue discs) and y (red discs)
+    x = x0
+    y = y0  # The number of red discs
+
+    while True:
+        # Check if the solution satisfies the required condition
+        sqrt = math.isqrt(y**2 * 8 + 1)
+
+        # Check if the square root is odd (for the solution to be valid)
+        if sqrt % 2 == 1:  # It must be odd
+            # Calculate the number of blue discs
+            blue = (sqrt + 1) // 2 + y
+
+            # Check if the total number of discs exceeds 10^12
+            if blue + y > 10**12:
+                return str(blue)
+
+        # Generate the next solution using the recurrence relations
+        nextx = x * x0 + y * y0 * 8
+        nexty = x * y0 + y * x0
+        x = nextx
+        y = nexty
 
 
 if __name__ == "__main__":
-	print(compute())
+    print(f"Problem 100: {compute()}")

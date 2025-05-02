@@ -1,30 +1,44 @@
-# Find the smallest cube for which exactly five permutations of its digits are cube.
-# Execution time: 9.221s
+# pylint: disable=line-too-long
+"""
+Problem 62: Cubic Permutations
 
-# Create the cubes
-cubes = [x**3 for x in range(9000)]
+Problem description:
+In this problem, we are tasked with finding the smallest cube for which exactly five permutations of its digits are also cubes.
+The goal is to efficiently find the smallest cube that has exactly five permutations of its digits that are also cubes.
 
-# Compare the lenght of both cubes then sort the strings to see if it is a permutation.
-for i, cube1 in enumerate(cubes):
-    lst_cube1 = list(str(cube1))
-    permutations = [cube1]
+Answer: 127035954683
+"""
 
-    for cube2 in cubes[i+1:]:
-        lst_cube2 = (str(cube2))
+import collections
+from utils import profiler
 
-        if len(lst_cube2) < len(lst_cube1):
-            continue
 
-        if len(lst_cube2) > len(lst_cube1):
-            break
+@profiler
+def compute() -> int:
+    """
+    Computes the smallest cube for which exactly five permutations of its digits are cubes.
 
-        if sorted(lst_cube1) == sorted(lst_cube2):
-            permutations.append(cube2)
+    Returns:
+        int: The smallest cube with exactly five permutations of its digits being cubes.
+    """
+    # Create a dictionary to store cubes by their sorted digits
+    cubes_by_digits = collections.defaultdict(list)
 
-    if len(permutations) == 5:
-        break
+    # Start checking cubes from cube of numbers
+    n = 1
+    while True:
+        cube = n**3
+        sorted_digits = ''.join(sorted(str(cube))) # Create the digit signature
 
-print("Digits with 5 permutations:", permutations)
+        # Add this cube to the list of cubes with the same sorted digit signature
+        cubes_by_digits[sorted_digits].append(cube)
+
+        # Check if we have exactly 5 cubes with the same signature
+        if len(cubes_by_digits[sorted_digits]) == 5:
+            return min(cubes_by_digits[sorted_digits]) # Return the smallest cube
+
+        n += 1 # Increment n to check the next cube
+
 
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 62: {compute()}")

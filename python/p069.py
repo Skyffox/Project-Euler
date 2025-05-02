@@ -1,18 +1,41 @@
-# Find the value of n ≤ 1,000,000 for which n/phi(n) is a maximum.
-# Execution time: 0.215s
+# pylint: disable=no-name-in-module, line-too-long
+"""
+Problem 69: Totient Maximum
 
-from utils import sieve_of_atkin
+Problem description:
+This module solves the problem of finding the value of n ≤ 1,000,000 for which the ratio 
+n/φ(n) is maximized. Where φ(n) is Euler's Totient function, which counts the number of integers 
+less than n that are coprime with n.
 
-UPPER_BOUND = 1000000
-sieve = sieve_of_atkin(100)
-total = 1
+The maximum value of n/φ(n) is made up from the product of prime numbers, as they have the simplest 
+structure for calculating φ(n).
 
-# We know that the highest number for n/phi(n) is made up from only
-# prime numbers, since those can only be divided by themselves.
-for i in sieve:
-    total *= i
-    if total > UPPER_BOUND:
-        print("Greatest value of n for which n/phi(n) is maximum:", total/i)
-        break
+Answer: 510510
+"""
+
+from utils import profiler, sieve_of_atkin
+
+
+@profiler
+def compute() -> int:
+    """
+    Computes the value of n ≤ 1,000,000 for which n/φ(n) is maximized.
+
+    Returns:
+        int: The value of n for which n/φ(n) is maximum.
+    """
+    limit = 1000000
+    sieve = sieve_of_atkin(limit)
+    total = 1
+
+    # Iterate through primes and multiply them together until total exceeds UPPER_BOUND
+    for prime in sieve:
+        total *= prime
+        if total > limit:
+            return total // prime  # Return the value of n for which n/φ(n) is maximized
+
+    return -1
+
+
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 69: {compute()}")

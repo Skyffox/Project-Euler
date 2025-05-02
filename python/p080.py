@@ -1,22 +1,46 @@
-# For the first one hundred natural numbers, find the total of the digital sums of the first one hundred decimal digits for all the irrational square roots.
-# Execution time: 0.231s
+# pylint: disable=line-too-long
+"""
+Problem 80: Square Root Digital Expansion
 
-from decimal import Decimal, Context
+Problem Description:
+We are asked to compute the total of the digital sums of the first 100 decimal digits 
+of the square roots of non-perfect squares, for numbers from 2 to 100. The goal is to 
+calculate the sum of these digits, excluding the perfect squares, since their square roots 
+are integers. For each non-perfect square, we calculate its square root, extract the first 
+100 decimal digits, and sum them. Finally, we compute the total sum of these individual sums.
 
-s = 0
-for i in range(2, 100):
-    decimal = Decimal(i)
+Answer: 40886
+"""
 
-    # Add a context with an arbitrary precision of 100
-    dec100 = Context(prec=100)
-
-    number = str(decimal.sqrt(dec100))
-
-    s += sum([int(x) for x in number[2:]])
+from decimal import Decimal, localcontext
+from utils import profiler
 
 
-# There is something wrong with this way and the library probably...
-print("Total of the digital sums is 40886")
-print("My total is:", s)
+@profiler
+def compute() -> int:
+    """
+    Computes the total sum of the digital sums of the square roots of the first 100 non-perfect squares.
+
+    Returns:
+        int: The total sum of the digital sums of the square roots of non-perfect squares.
+    """
+    total_sum = 0
+    for x in range(1, 100):
+        # Skip perfect squares as their square roots are integers and don't contribute to the sum
+        if int(x**0.5) == x**0.5:
+            continue
+
+        # Use localcontext to set the precision for decimal operations
+        with localcontext() as ctx:
+            ctx.prec = 105 # We need 100 decimal digits plus a few extra for precision
+            sqrt_x = Decimal(x).sqrt()
+
+            # Convert the square root to a string and sum the first 100 decimal digits
+            sqrt_str = str(sqrt_x)[2:101] # Extract the first 100 decimal digits (skip "1.")
+            total_sum += sum(int(digit) for digit in sqrt_str) + int(str(Decimal(x).sqrt())[0])
+
+    return total_sum
+
+
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 80: {compute()}")

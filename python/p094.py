@@ -1,73 +1,82 @@
-import math, itertools
+# pylint: disable=line-too-long
+"""
+Project Euler Problem 94: Almost Equilateral Triangles
+
+Problem description:
+An almost equilateral triangle is a triangle with side lengths (a, a, c), where c is either a+1 or a-1.
+The height of the triangle can be computed using a right triangle with half the base (c/2) and side length a as the hypotenuse.
+
+To produce a valid integer area, both the height (h) and half the base (c/2) must be integers, and (h, c/2, a) must be a Pythagorean triple.
+
+Find the sum of the perimeters of all almost equilateral triangles with integer areas and perimeter ≤ 1,000,000,000.
+
+Answer: 518408346
+"""
+
+import math
+import itertools
+from utils import profiler
 
 
-# Consider an arbitrary almost equilateral triangle with side lengths (c, c, c +/- 1).
-# Split it down the middle to get a right triangle, and label the new sides.
-#     /\               /|
-#  c /  \ c         c / | b
-#   /    \    -->    /  |
-#  --------         -----
-#   c +/- 1           a
-# Note that a = (c +/- 1) / 2, and a^2 + b^2 = c^2 (Pythagorean theorem).
-# 
-# We know that c is an integer. The area of the original triangle is a*b,
-# which is an integer by definition from the problem statement.
-# - If a is an integer, then b is an integer (so that a*b is an integer),
-#   thus (a,b,c) is a Pythagorean triple.
-# - Otherwise a is an integer plus a half, then b must be even,
-#   but a^2 + b^2 is not an integer, which contradicts c being an integer.
-# 
-# Conversely, consider an arbitrary Pythagorean triple (a,b,c).
-# If 2a = c +/- 1, then we can form an almost equilateral triangle:
-#     /|\
-#  c / | \ c
-#   /  |  \
-#  ---------
-#      2a
-# For this to happen, the Pythagorean triple must be primitive. Because if not,
-# then a = 0 mod k and c = 0 mod k for some k > 1, which means 2a = 0 mod k which
-# cannot equal c +/- 1 = +/- 1 mod k. So we only need to generate primitive triples.
-# 
-# Pythagorean triples theorem:
-#   Every primitive Pythagorean triple with a odd and b even can be expressed as
-#   a = st, b = (s^2-t^2)/2, c = (s^2+t^2)/2, where s > t > 0 are coprime odd integers.
+@profiler
 def compute():
-	LIMIT = 10**9
-	ans = 0
-	# What search range do we need?
-	# c = (s^2+t^2)/2. Perimeter = p = 3c +/- 1 = 3/2 (s^2+t^2) +/- 1 <= LIMIT.
-	# We need to keep the smaller perimeter within limit for
-	# the search to be meaningful, so 3/2 (s^2+t^2) - 1 <= LIMIT.
-	# With t < s, we have that s^2+t^2 < 2s^2, so 3/2 (s^2+t^2) - 1 < 3s^2 - 1.
-	# Therefore it is sufficient to ensure that 3s^2 - 1 <= LIMIT, i.e. s^2 <= (LIMIT+1)/3.
-	for s in itertools.count(1, 2):
-		if s * s > (LIMIT + 1) // 3:
-			break
-		for t in range(s - 2, 0, -2):
-			if math.gcd(s, t) == 1:
-				a = s * t
-				b = (s * s - t * t) // 2
-				c = (s * s + t * t) // 2
-				if a * 2 == c - 1:
-					p = c * 3 - 1
-					if p <= LIMIT:
-						ans += p
-				if a * 2 == c + 1:
-					p = c * 3 + 1
-					if p <= LIMIT:
-						ans += p
-				# Swap the roles of a and b and try the same tests
-				# Note that a != b, since otherwise c = a * sqrt(2) would be irrational
-				if b * 2 == c - 1:
-					p = c * 3 - 1
-					if p <= LIMIT:
-						ans += p
-				if b * 2 == c + 1:
-					p = c * 3 + 1
-					if p <= LIMIT:
-						ans += p
-	return str(ans)
+    """
+    This function calculates the sum of the perimeters of all almost equilateral 
+    triangles with integer side lengths, where the perimeter does not exceed LIMIT (10^9).
+    These triangles have side lengths in the form of (c, c, c +/- 1), where c is the integer 
+    hypotenuse, and a^2 + b^2 = c^2 holds for the right triangle formed by splitting the 
+    equilateral triangle down the middle.
+
+    The solution uses primitive Pythagorean triples and iterates over possible values of 
+    s and t that generate valid triples. It checks for the condition that either a*2 = c - 1 or 
+    a*2 = c + 1 or the same conditions with b.
+
+    Returns:
+        str: The total sum of the perimeters of all valid almost equilateral triangles with integer sides
+             where the perimeter does not exceed 10^9.
+    """
+    limit = 10**9
+    total_perimeter = 0
+
+    # We want to limit the search space based on the constraint:
+    # 3c +/- 1 <= LIMIT, where c = (s^2 + t^2) / 2
+    # This means we need to ensure 3s^2 - 1 <= LIMIT, i.e., s^2 <= (LIMIT + 1) / 3.
+    for s in itertools.count(1, 2):  # s starts from 1 and increments by 2 (odd numbers only)
+        if s * s > (limit + 1) // 3:
+            break  # Stop if s^2 exceeds the limit
+
+        # Iterate over possible t values (also odd), ensuring s > t > 0 and gcd(s, t) == 1
+        for t in range(s - 2, 0, -2):  # t must be less than s, and t must be odd
+            if math.gcd(s, t) == 1:  # Ensure s and t are coprime
+                a = s * t
+                b = (s * s - t * t) // 2
+                c = (s * s + t * t) // 2
+
+                # Check if a*2 = c - 1 or a*2 = c + 1
+                if a * 2 == c - 1:
+                    p = c * 3 - 1
+                    if p <= limit:
+                        total_perimeter += p
+
+                if a * 2 == c + 1:
+                    p = c * 3 + 1
+                    if p <= limit:
+                        total_perimeter += p
+
+                # Check for the case where b*2 = c - 1 or b*2 = c + 1
+                if b * 2 == c - 1:
+                    p = c * 3 - 1
+                    if p <= limit:
+                        total_perimeter += p
+
+                if b * 2 == c + 1:
+                    p = c * 3 + 1
+                    if p <= limit:
+                        total_perimeter += p
+
+    # Return the total perimeter as a string
+    return str(total_perimeter)
 
 
 if __name__ == "__main__":
-	print(compute())
+    print(f"Problem 94: {compute()}")

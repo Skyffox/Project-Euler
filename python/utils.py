@@ -1,6 +1,6 @@
 # pylint: disable=line-too-long
 """
-Useful functions to help with Euler problems
+Utility functions to assist with solving Project Euler problems.
 """
 
 from functools import wraps
@@ -9,68 +9,100 @@ import math
 
 
 def profiler(func):
-    """Allows for a timing decorator on a function"""
+    """
+    A decorator to measure and log the execution time of a function.
+    
+    This decorator wraps the provided function and tracks the time it takes 
+    to execute. The measured execution time is printed to the console 
+    with a timestamp.
+
+    Args:
+        func (function): The function whose execution time needs to be measured.
+
+    Returns:
+        function: A wrapped version of the input function, which logs the execution time.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        start = time.time()
-        result = func(*args,**kwargs)
-        print(f'Time taken by function {func.__name__} is: {time.time() - start:0.4f} seconds')
-
+        start_time = time.time() # Record the start time of the function call
+        result = func(*args, **kwargs) # Execute the original function
+        elapsed_time = time.time() - start_time # Compute the elapsed time
+        print(f"Execution time of '{func.__name__}': {elapsed_time:.4f} seconds")
         return result
+
     return wrapper
 
 
 def is_prime(n):
     """
-    Assumes that n is a positive natural number
-    """
-    # We know 1 is not a prime number
-    if n == 1:
-        return False
+    Determine if a number is prime.
 
-    i = 2
-    # This will loop from 2 to int(sqrt(x))
-    while i * i <= n:
-        # Check if i divides x without leaving a remainder
+    A prime number is a natural number greater than 1 that cannot be divided 
+    evenly by any other numbers except for 1 and itself. This function efficiently 
+    checks for primality by testing divisibility up to the square root of the given number.
+
+    Args:
+        n (int): The integer to check for primality.
+
+    Returns:
+        bool: True if the number is prime, False otherwise.
+    """
+    if n <= 1:
+        return False # Numbers less than or equal to 1 are not prime
+    if n == 2 or n == 3:
+        return True # 2 and 3 are prime numbers
+    if n % 2 == 0:
+        return False # Exclude even numbers greater than 2
+
+    # Check for divisibility from 3 up to the square root of n, skipping even numbers
+    for i in range(3, int(math.sqrt(n)) + 1, 2):
         if n % i == 0:
-            # This means that n has a factor in between 2 and sqrt(n)
-            # So it is not a prime number
             return False
-        i += 1
-    # If we did not find any factor in the above loop,
-    # then n is a prime number
     return True
 
 
 def sieve_of_atkin(limit):
     """
-    The sieve of Atkin is a modern algorithm for finding all prime numbers up to a specified integer. 
-    Compared with the ancient sieve of Eratosthenes, which marks off multiples of primes, 
-    the sieve of Atkin does some preliminary work and then marks off multiples of squares of primes.
+    Generates all prime numbers up to a given limit using the Sieve of Atkin method.
+    
+    The Sieve of Atkin is an optimized prime number generation algorithm that is faster 
+    than the traditional Sieve of Eratosthenes for large numbers. The function generates 
+    primes by checking possible values for a given limit, and uses modular arithmetic 
+    to filter out non-prime numbers.
+    
+    Args:
+        limit (int): The upper bound up to which prime numbers will be generated.
+        
+    Returns:
+        list[int]: A list of prime numbers up to the specified limit.
     """
+    sieve = [False] * (limit + 1)  # Initialize a sieve array to mark non-primes
     primes = [2, 3]
-    sieve = [False] * (limit + 1)
+
+    # Sieve algorithm to mark prime candidates
     for x in range(1, int(math.sqrt(limit)) + 1):
         for y in range(1, int(math.sqrt(limit)) + 1):
-            n = 4 * x ** 2 + y ** 2
+            n = 4 * x**2 + y**2
             if n <= limit and (n % 12 == 1 or n % 12 == 5):
                 sieve[n] = not sieve[n]
 
-            n = 3 * x ** 2 + y ** 2
+            n = 3 * x**2 + y**2
             if n <= limit and n % 12 == 7:
                 sieve[n] = not sieve[n]
 
-            n = 3 * x ** 2 - y ** 2
+            n = 3 * x**2 - y**2
             if x > y and n <= limit and n % 12 == 11:
                 sieve[n] = not sieve[n]
 
-    for x in range(5, int(math.sqrt(limit))):
-        if sieve[x]:
-            for y in range(x ** 2, limit + 1, x ** 2):
-                sieve[y] = False
+    # Eliminate numbers which are divisible by perfect squares of primes
+    for n in range(5, int(math.sqrt(limit)) + 1):
+        if sieve[n]:
+            for k in range(n**2, limit + 1, n**2):
+                sieve[k] = False
 
-    for p in range(5, limit):
-        if sieve[p]:
-            primes.append(p)
+    # Collect all primes less than or equal to the limit
+    for n in range(5, limit + 1):
+        if sieve[n]:
+            primes.append(n)
 
     return primes

@@ -1,79 +1,104 @@
+# pylint: disable=line-too-long
+"""
+Problem 98: Anagramic Squares
 
-# By replacing each of the letters in the word CARE with 1, 2, 9, and 6 respectively, we form a square number: 1296 = 362. 
-# What is remarkable is that, by using the same digital substitutions, the anagram, RACE, also forms a square number: 9216 = 962.
-# What is the largest square number formed by any member of such a pair?
+Problem description:
+Find the largest square number formed by any member of a pair of anagramic words.
 
-# To solve this problem, we need to:
-# Convert each word into a unique representation (for example, sort the characters or use a signature like the sum of the characters' ASCII values).
-# Map those representations to square numbers.
-# Check for pairs of square numbers whose corresponding words are anagrams of each other.
-# Find the largest square number among these pairs.
+Approach:
+- Read and parse a word list to group anagram pairs.
+- For each valid anagram pair, attempt all digit assignments.
+- Check if the mapped words form valid square numbers.
 
-# Solution Strategy:
-# Generate Square Numbers: First, we'll generate a list of square numbers, as they will form the basis for checking the anagram pairs.
-# Sort and Check Anagrams: For each word, sort its letters and use this sorted string as a signature. This will help identify which words are anagrams of each other.
-# Map Words to Square Numbers: For each anagram group, check if they correspond to valid square numbers. We can do this by verifying if the numbers formed by the sorted letters of a word are perfect squares.
-# Find the Largest Pair: Among the valid anagram pairs of square numbers, find the largest square.
-
-# Execution time: ???
+Answer: 18769
+"""
 
 import math
+from typing import Dict, List
+from utils import profiler
 
-def is_perfect_square(n):
-    """Check if a number n is a perfect square."""
-    return int(math.sqrt(n)) ** 2 == n
 
-# Strings a and b must be anagrams of each other.
-def max_square_pair(a, b, index, assignments, isdigitused):
-	if index == len(a):
-		if      a[0] in assignments and assignments[a[0]] == 0 or \
-		        b[0] in assignments and assignments[b[0]] == 0:
-			return 0
-		
-		anum = 0
-		bnum = 0
-		for (x, y) in zip(a, b):
-			anum = anum * 10 + assignments[x]
-			bnum = bnum * 10 + assignments[y]
-		if is_perfect_square(anum) and is_perfect_square(bnum):
-			return max(anum, bnum)
-		else:
-			return 0
-	
-	elif a[index] in assignments:
-		return max_square_pair(a, b, index + 1, assignments, isdigitused)
-	
-	else:
-		result = 0
-		for i in range(10):
-			if not isdigitused[i]:
-				isdigitused[i] = True
-				assignments[a[index]] = i
-				result = max(max_square_pair(a, b, index + 1, assignments, isdigitused), result)
-				del assignments[a[index]]
-				isdigitused[i] = False
-		return result
+def is_perfect_square(n: int) -> bool:
+    """Returns True if n is a perfect square."""
+    root = int(math.isqrt(n))
+    return root * root == n
 
-def compute():
-	with open("inputs/p098_words.txt", "r", encoding="utf-8") as file:
-		anagrams = {}
-		for words in file:
-			words = words.strip().split(",")
-			for word in words:
-				word = word.replace("\"", "")
-				print(word)
-				key = "".join(sorted(word))
-				if key not in anagrams:
-					anagrams[key] = []
-				anagrams[key].append(word)
 
-	ans = 0
-	for (key, words) in anagrams.items():
-		for i in range(len(words)):
-			for j in range(i + 1, len(words)):
-				assignments = {}
-				ans = max(max_square_pair(words[i], words[j], 0, assignments, [False] * 10), ans)
-	return str(ans)
+def try_digit_assignments(a: str, b: str, index: int, assignments: Dict[str, int], used_digits: List[bool]) -> int:
+    """
+    Recursively tries digit assignments to letters and checks if both words map to perfect squares.
+    
+    Args:
+        a (str): First word in the anagram pair.
+        b (str): Second word in the anagram pair.
+        index (int): Current character index being assigned.
+        assignments (dict): Current letter-to-digit assignments.
+        used_digits (list): Boolean list to mark used digits.
+
+    Returns:
+        int: The maximum square number found for valid assignments; otherwise 0.
+    """
+    if index == len(a):
+        if assignments[a[0]] == 0 or assignments[b[0]] == 0:
+            return 0  # No leading zeros
+
+        anum = int("".join(str(assignments[ch]) for ch in a))
+        bnum = int("".join(str(assignments[ch]) for ch in b))
+
+        if is_perfect_square(anum) and is_perfect_square(bnum):
+            return max(anum, bnum)
+        return 0
+
+    char = a[index]
+    if char in assignments:
+        return try_digit_assignments(a, b, index + 1, assignments, used_digits)
+
+    max_result = 0
+    for digit in range(10):
+        if not used_digits[digit]:
+            used_digits[digit] = True
+            assignments[char] = digit
+
+            max_result = max(max_result, try_digit_assignments(a, b, index + 1, assignments, used_digits))
+
+            used_digits[digit] = False
+            del assignments[char]
+
+    return max_result
+
+
+@profiler
+def compute() -> str:
+    """
+    Main function that solves Problem 98 by checking all anagram word pairs
+    and finding the maximum square number that can be formed from them.
+
+    Returns:
+        str: The largest square number found as a string.
+    """
+    with open("inputs/p098_words.txt", "r", encoding="utf-8") as file:
+        words = file.read().replace('"', '').split(',')
+
+    # Group words by sorted characters to find anagram sets
+    anagram_groups: Dict[str, List[str]] = {}
+    for word in words:
+        key = ''.join(sorted(word))
+        anagram_groups.setdefault(key, []).append(word)
+
+    max_square = 0
+
+    # Check each group of anagram words
+    for group in anagram_groups.values():
+        if len(group) < 2:
+            continue
+        for i in range(len(group)):
+            for j in range(i + 1, len(group)):
+                max_square = max(
+                    max_square,
+                    try_digit_assignments(group[i], group[j], 0, {}, [False] * 10)
+                )
+
+    return str(max_square)
 
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 98: {compute()}")

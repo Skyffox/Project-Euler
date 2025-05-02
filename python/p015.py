@@ -1,19 +1,34 @@
 # pylint: disable=line-too-long
 """
-Problem 15: Starting in the top left corner of a 2×2 grid, and only being able to move to
-            the right and down, there are exactly 6 routes to the bottom right corner.
-            How many such routes are there through a 20×20 grid?
-Answer: 
-Execution time: 0.0000s
+Problem 15: Lattice Paths
+
+Problem description:
+Starting in the top left corner of a 2×2 grid, and only being able to move to
+the right and down, there are exactly 6 routes to the bottom right corner.
+How many such routes are there through a 20×20 grid?
+
+Answer: 137846528820
 """
 
 from utils import profiler
 
 
-def binomial_coefficient(n, k):
-    """Compute the binomial coefficient"""
-    # Ensure k is the smaller of n - k and k for efficiency
-    k = min(k, n - k)
+@profiler
+def compute() -> int:
+    """
+    Calculate the number of paths through a 20x20 grid using combinatorics.
+
+    In a grid of size 20x20, to reach the bottom-right corner, you need to make exactly 
+    20 moves down and 20 moves to the right. The total number of distinct paths is 
+    equivalent to the number of ways to arrange a sequence of 20 downs (D) and 20 rights (R).
+    This is a combinatorial problem, where the result is given by the binomial coefficient 
+    C(40, 20), representing the number of ways to choose 20 moves (down or right) from a total of 40 moves.
+
+    Returns:
+        int: The number of distinct paths through the 20x20 grid.
+    """
+    n = 2 * 20
+    k = 20
 
     # Compute the binomial coefficient using the multiplicative formula
     result = 1
@@ -22,16 +37,6 @@ def binomial_coefficient(n, k):
         result //= (i + 1)
 
     return result
-
-
-@profiler
-def compute():
-    """
-    The number of paths through an n x n grid is a combinatorial problem. At each step, you have to either move down or right. 
-    To get to the bottom-right corner, you need to make exactly 20 moves down and 20 moves to the right. Thus, the problem boils 
-    down to finding the number of ways to arrange a sequence of 20 downs (D) and 20 rights (R).
-    """
-    return binomial_coefficient(2 * 20, 20)
 
 
 if __name__ == "__main__":

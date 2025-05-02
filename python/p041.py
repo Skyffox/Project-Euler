@@ -1,50 +1,47 @@
-# We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once. For example, 2143 is a 4-digit pandigital and is also prime.
-# What is the largest n-digit pandigital prime that exists?
-# Execution time: 0.454s
+# pylint: disable=no-name-in-module, line-too-long
+"""
+Problem 41: Pandigital Prime
 
-def is_prime(n):
-    if n == 2 or n == 3:
-        return True
-    if n % 2 == 0 or n < 2:
-        return False
-    # Check only for odd numbers
-    for i in range(3, int(n**0.5) + 1, 2):
-        if n % i == 0:
-            return False
-    return True
+Problem Description:
+We are asked to find the largest n-digit pandigital prime. A pandigital number is one that 
+uses all the digits from 1 to n exactly once. For example, 2143 is a 4-digit pandigital and is 
+also a prime number.
+
+We need to identify the largest pandigital prime by checking numbers with digits from 1 to n, 
+where n <= 9, and checking if they are prime.
+
+Answer: 7652413
+"""
+
+from itertools import permutations
+from utils import profiler, is_prime
+
+
+@profiler
+def compute() -> int:
+    """
+    Finds the largest pandigital prime by generating permutations of the digits from 1 to n 
+    (for n = 1 to 9), converting them into integers, and checking for primality.
     
-
-def permutation(lst):
-    # If lst is empty then there are no permutations
-    if len(lst) == 0:
-        return []
- 
-    # If there is only one element in lst then, only
-    # one permuatation is possible
-    if len(lst) == 1:
-        return [lst]
+    This function iterates over pandigital numbers with decreasing digits (starting from 9 digits),
+    checking if each pandigital number is prime. The first prime encountered is returned.
     
-    l = []
-    for i in range(len(lst)):
-        # Extract lst[i] from the list. remLst is remaining list
-        m = lst[i]
-        remLst = lst[:i] + lst[i+1:]
+    Returns:
+        int: The largest pandigital prime.
+    """
+    # Iterate over n from 9 down to 1 (since we want the largest pandigital prime)
+    for n in range(9, 0, -1):
+        # Generate pandigital numbers using digits from 1 to n
+        pandigital_digits = ''.join(map(str, range(1, n + 1)))
 
-        # Generating all permutations where m is first element
-        for p in permutation(remLst):
-            l.append([m] + p)
-    return l
+        # Generate permutations and check if any are prime
+        for perm in sorted(permutations(pandigital_digits), reverse=True):
+            num = int(''.join(perm))
+            if is_prime(num): # Check if the number is prime
+                return num # Return the largest pandigital prime found
 
-largest_prime = 0
-for n in range(10):
-    lst = list(range(1, n))
-    permutation_lst = permutation(lst)
-    for sub_lst in permutation_lst:
-        num = int(''.join(map(str, sub_lst)))
-        if is_prime(num):
-            if num > largest_prime:
-                largest_prime = num
-            
-print ("The largest n-digit pandigital prime is:", largest_prime)
+    return None
+
+
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 41: {compute()}")

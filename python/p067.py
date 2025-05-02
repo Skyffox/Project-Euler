@@ -1,20 +1,49 @@
-# Find the maximum total from top to bottom in triangle with one-hundred rows.
-# Execution time: 0.260s
+# pylint: disable=line-too-long
+"""
+Problem 67: Maximum Path Sum II
 
-t = []
-with open('inputs/p067_triangle.txt', 'r') as f:
-    for line in f:
-        line = line.strip().split(' ')
-        t.append([int(x) for x in line])
+Problem description:
+This module solves the problem of finding the maximum total from top to bottom in a triangle of one-hundred rows.
+The triangle is represented as a list of lists, where each list contains the numbers at each level of the triangle.
+The goal is to start from the bottom of the triangle and move upwards, at each step selecting the larger of the two adjacent numbers, 
+to ultimately reach the top, obtaining the maximum total sum.
+
+Answer: 7273
+"""
+
+from utils import profiler
 
 
-# Work from bottom to top, minus two for bottom and top row.
-for i in range(len(t) - 2, -1, -1):
-    # Just a fancy way to iterate over the length of the line.
-    for j in range(i+1):
-        t[i][j] += max(t[i + 1][j], t[i + 1][j + 1])
+@profiler
+def compute() -> int:
+    """
+    Computes the maximum total from top to bottom in a triangle.
+    
+    The triangle is read from the file 'inputs/p067_triangle.txt'. 
+    The function computes the maximum path sum by starting from the bottom 
+    of the triangle and working upwards, updating each element to store 
+    the maximum possible sum from that element to the bottom.
+    
+    Returns:
+        int: The maximum path sum starting from the top.
+    """
+    t = []
+
+    # Read the triangle from a file and store it as a list of lists
+    with open('inputs/p067_triangle.txt', 'r', encoding="utf-8") as f:
+        for line in f:
+            line = line.strip().split(' ')
+            t.append([int(x) for x in line])
+
+    # Process the triangle from bottom to top
+    for i in range(len(t) - 2, -1, -1): # Start from the second-to-last row
+        for j in range(i + 1):
+            # Update each element with the maximum sum of the two possible paths below
+            t[i][j] += max(t[i + 1][j], t[i + 1][j + 1])
+
+    # The top element now contains the maximum path sum
+    return t[0][0]
 
 
-print('Maximum path:', t[0][0])
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 67: {compute()}")

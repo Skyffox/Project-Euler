@@ -1,13 +1,15 @@
 # pylint: disable=line-too-long
 """
-Problem 11: What is the greatest product of four adjacent numbers in the same direction
-            (up, down, left, right, or diagonally) in the 20×20 grid?
+Problem 11: Largest Product in a Grid
+
+Problem description:
+In a 20×20 grid of numbers, the task is to find the greatest product of four adjacent numbers in the same direction. 
+The four numbers can be adjacent either horizontally, vertically, or diagonally.
+
 Answer: 70600674
-Execution time: 0.0000s
 """
 
 from utils import profiler
-
 
 numbers = [
     ["08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08"],
@@ -34,35 +36,42 @@ numbers = [
 
 
 @profiler
-def compute():
-    """Walk the grid in all directions to calculate products"""
-    # Split every line and cast the line to integers
-    grid = [list(map(int, i[0].split())) for i in numbers]
+def compute() -> int:
+    """
+    Finds the greatest product of four adjacent numbers in any direction (up, down, left, right, diagonally) 
+    in a fixed 20x20 grid of numbers.
 
-    # There are 20 rows, each containing 20 integers
-    biggest_product = 0
-    for i in range(20):
-        for j in range(16):
-            # Right/left products
-            product = grid[i][j] * grid[i][j+1] * grid[i][j+2] * grid[i][j+3]
-            biggest_product = max(biggest_product, product)
+    Returns:
+        int: The greatest product of four adjacent numbers found in the grid.
+    """
+    grid = [list(map(int, row[0].split())) for row in numbers]
+    max_product = 0
+    grid_size = 20  # Fixed grid size
 
-            # Up/down products
-            product = grid[j][i] * grid[j+1][i] * grid[j+2][i] * grid[j+3][i]
-            biggest_product = max(biggest_product, product)
+    # Loop over all positions in the grid
+    for i in range(grid_size):
+        for j in range(grid_size):
+            # Rightward product (Horizontal)
+            if j + 3 < grid_size:
+                product = grid[i][j] * grid[i][j + 1] * grid[i][j + 2] * grid[i][j + 3]
+                max_product = max(max_product, product)
 
-    # Diagonal products
-    for i in range(16):
-        for j in range(16):
-            product = grid[i][j] * grid[i+1][j+1] * grid[i+2][j+2] * grid[i+3][j+3]
-            biggest_product = max(biggest_product, product)
+            # Downward product (Vertical)
+            if i + 3 < grid_size:
+                product = grid[i][j] * grid[i + 1][j] * grid[i + 2][j] * grid[i + 3][j]
+                max_product = max(max_product, product)
 
-    for i in range(3,20):
-        for j in range(16):
-            product = grid[i][j] * grid[i-1][j+1] * grid[i-2][j+2] * grid[i-3][j+3]
-            biggest_product = max(biggest_product, product)
+            # Diagonal Down-Right
+            if i + 3 < grid_size and j + 3 < grid_size:
+                product = grid[i][j] * grid[i + 1][j + 1] * grid[i + 2][j + 2] * grid[i + 3][j + 3]
+                max_product = max(max_product, product)
 
-    return biggest_product
+            # Diagonal Down-Left
+            if i + 3 < grid_size and j - 3 >= 0:
+                product = grid[i][j] * grid[i + 1][j - 1] * grid[i + 2][j - 2] * grid[i + 3][j - 3]
+                max_product = max(max_product, product)
+
+    return max_product
 
 
 if __name__ == "__main__":

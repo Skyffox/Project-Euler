@@ -1,57 +1,93 @@
-# The proper divisors of a number are all the divisors excluding the number itself. For example, the proper divisors of 28 are 1, 2, 4, 7, 
-# and 14. As the sum of these divisors is equal to 28, we call it a perfect number.
-# Interestingly the sum of the proper divisors of 220 is 284 and the sum of the proper divisors of 284 is 220, forming a chain of two numbers. 
-# For this reason, 220 and 284 are called an amicable pair.
-# Since this chain returns to its starting point, it is called an amicable chain.
-# Find the smallest member of the longest amicable chain with no element exceeding one million.
-# Execution time: 466.186s
+# pylint: disable=line-too-long
+"""
+Project Euler Problem 95: Amicable Chains
 
-def proper_divisors(n):
-    i = 1
-    lst = []
-    # Note that this loop runs till square root
-    while i <= (n**0.5):
-        if (n % i == 0):
-            # If divisors are equal
-            if (n / i == i):
-                lst.append(i)
-            else:
-                lst.append(i)
-                if (n / i != n):
-                    lst.append(int(n / i))
-        i = i + 1
+Problem description:
+The problem seeks the smallest member of the longest amicable chain such that
+no element in the chain exceeds one million. An amicable chain is formed by
+repeatedly summing the proper divisors of a number until the sequence loops.
 
-    return sum(lst)
+Answer: 14316
+"""
+
+import time
+from utils import profiler
+
+def sum_proper_divisors(n: int) -> int:
+    """
+    Returns the sum of proper divisors of a number n (excluding n itself).
+
+    Args:
+        n (int): The number for which to calculate the proper divisors.
+
+    Returns:
+        int: Sum of proper divisors of n.
+    """
+    if n < 2:
+        return 0
+
+    total = 1  # 1 is a proper divisor of every number > 1
+    sqrt_n = int(n ** 0.5)
+
+    for i in range(2, sqrt_n + 1):
+        if n % i == 0:
+            total += i
+            complement = n // i
+            if complement != i:
+                total += complement
+
+    return total
 
 
-best = 0
-perfect_numbers = [1]
-for i in range(2, 600000): 
-    s = proper_divisors(i)
-    lst_len = 1
-    lst = [i]
-    seen = [s]
-    while s != i:
-        old_s = s
-        lst.append(s)
-        s = proper_divisors(s)
+@profiler
+def compute(limit: int = 1_000_000) -> int:
+    """
+    Computes the smallest member of the longest amicable chain under the given limit.
 
-        if s > 1000000 or s in seen:
-            lst_len = 0
-            break
-        if s == old_s:
-            perfect_numbers.append(s)
-            lst_len = 0
-            break
+    Args:
+        limit (int): Upper bound for values in the chain (default: 1,000,000).
 
-        lst_len += 1
-        seen.append(s)
+    Returns:
+        int: The smallest member of the longest amicable chain.
+    """
+    divisor_sum_cache = [0] * (limit + 1)
+    for i in range(1, limit + 1):
+        divisor_sum_cache[i] = sum_proper_divisors(i)
 
-    if lst_len > best:
-        best = lst_len
-        best_lst = lst
+    longest_chain_length = 0
+    smallest_member_of_longest_chain = None
+    visited = [False] * (limit + 1)
 
-print(best, best_lst)
-print("smallest member of longest list", min(best_lst))
+    for start in range(2, limit):
+        if visited[start]:
+            continue
+
+        chain = []
+        seen = {}
+        n = start
+
+        while n <= limit and n not in seen:
+            if visited[n]:
+                break
+
+            seen[n] = len(chain)
+            chain.append(n)
+            n = divisor_sum_cache[n]
+
+        if n in seen:
+            cycle_start = seen[n]
+            cycle = chain[cycle_start:]
+            if all(x <= limit for x in cycle):
+                if len(cycle) > longest_chain_length:
+                    longest_chain_length = len(cycle)
+                    smallest_member_of_longest_chain = min(cycle)
+
+        for x in chain:
+            if x <= limit:
+                visited[x] = True
+
+    return smallest_member_of_longest_chain
+
+
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 95: {compute()}")

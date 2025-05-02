@@ -1,50 +1,61 @@
-# The prime 41, can be written as the sum of six consecutive primes: 41 = 2 + 3 + 5 + 7 + 11 + 13
-# This is the longest sum of consecutive primes that adds to a prime below one-hundred.
-# The longest sum of consecutive primes below one-thousand that adds to a prime, contains 21 terms, and is equal to 953.
-# Which prime, below one-million, can be written as the sum of the most consecutive primes?
-# Execution time: 0.216s
+# pylint: disable=no-name-in-module, line-too-long
+"""
+Problem: Consecutive Prime Sum
+
+Problem Description:
+We are tasked with finding the prime below one million that can be written as 
+the sum of the most consecutive primes. The prime numbers are summed in consecutive 
+order, and the goal is to determine which prime, below one million, can be expressed 
+as the sum of the largest number of consecutive primes.
+
+Answer: 997651
+"""
+
+from utils import profiler, is_prime
 
 
-def is_prime(n):
-    if n == 2 or n == 3:
-        return True
-    if n % 2 == 0 or n < 2:
-        return False
-    # Check only for odd numbers
-    for i in range(3, int(n**0.5) + 1, 2):
-        if n % i == 0:
-            return False
-    return True
-
-primes = []
-s = 0
-n = 2
-while True:
-    if is_prime(n):
-        s += n
-        if s < 1000000:
-            primes.append(n)
-        else:
-            break
-    n += 1
-
-len_pri = len(primes)
-for x in range(len_pri):
-    # Take x primes from the left
-    l = primes[:-x]
-    # Take x primes from the right
-    r = primes[x:]
+@profiler
+def compute() -> int:
+    """
+    Finds the prime below one-million that can be written as the sum of the most consecutive primes.
     
-    if is_prime(sum(l)):
-        longest_sum = sum(l)
-        terms = len(l)
-        break
-        
-    if is_prime(sum(r)):
-        longest_sum = sum(r)
-        terms = len(r)
-        break
+    This function generates a list of primes below one million and checks the sums 
+    of consecutive primes to determine which prime can be written as the sum of 
+    the most consecutive primes.
+    
+    Returns:
+        int: The prime that is the sum of the most consecutive primes and the number of terms.
+    """
+    primes = []
+    s = 0
+    n = 2
+    while True:
+        if is_prime(n):
+            s += n
+            if s < 1000000:
+                primes.append(n)
+            else:
+                break
+        n += 1
 
-print(longest_sum, terms)
+    len_pri = len(primes)
+    longest_sum = 0
+
+    # Iterate through the list of primes and check sums of consecutive primes
+    for x in range(len_pri):
+        l = primes[:-x] # Take x primes from the left
+        r = primes[x:] # Take x primes from the right
+
+        if is_prime(sum(l)):
+            longest_sum = sum(l)
+            break
+
+        if is_prime(sum(r)):
+            longest_sum = sum(r)
+            break
+
+    return longest_sum
+
+
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 50: {compute()}")

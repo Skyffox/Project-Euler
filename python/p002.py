@@ -1,30 +1,40 @@
 # pylint: disable=line-too-long
 """
-Problem 1: By considering the terms in the Fibonacci sequence whose values do not
-           exceed four million, find the sum of the even-valued terms.
+Problem 2: Even Fibonacci numbers
+
+Problem description:
+By considering the terms in the Fibonacci sequence whose values do not
+exceed four million, find the sum of the even-valued terms.
+
 Answer: 4613732
-Execution time: 0.0000s
 """
 
 from utils import profiler
 
 
-LIMIT = 4000000
-
 @profiler
 def compute() -> int:
-    """Generate a list of Fibonacci numbers"""
-    lst = [1, 2]
-    first = 1
-    second = 2
-    third = first + second
+    """
+    Computes the sum of all even Fibonacci numbers that do not exceed the given limit.
 
-    while third < LIMIT:
-        lst.append(third)
-        first, second = second, third
-        third = first + second
+    This function generates Fibonacci numbers until they exceed the limit,
+    and then calculates the sum of those that are even.
 
-    return sum([x for x in lst if x % 2 == 0])
+    Returns:
+        int: The sum of the even Fibonacci numbers below the given limit.
+    """
+    # Initialize the first two Fibonacci numbers
+    first, second = 1, 2
+    total_sum = 0
+    limit = 4000000
+
+    # Generate Fibonacci numbers and sum the even ones
+    while second <= limit:
+        if second % 2 == 0:
+            total_sum += second
+        first, second = second, first + second
+
+    return total_sum
 
 
 if __name__ == "__main__":

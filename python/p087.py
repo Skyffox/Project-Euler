@@ -1,27 +1,57 @@
-# How many numbers below fifty million can be expressed as the sum of a prime square, prime cube, and prime fourth power?
-# Execution time: 1.807s
+# pylint: disable=no-name-in-module, line-too-long
+"""
+Problem 87: Prime Power Triples
 
-from utils import sieve_of_atkin
+Problem description:
+This problem involves finding how many numbers below fifty million can be expressed as the sum of a prime square,
+prime cube, and prime fourth power. The task is to determine how many distinct numbers can be expressed in this way.
 
-BOUND = 50000000
-LIMIT = int((BOUND - (2^3) - (2^4))**0.5)
-primes = sieve_of_atkin(LIMIT)
-total = 0
-nums = []
+Answer: 1097343
+"""
 
-for i in primes:
-    if pow(i, 2) > BOUND:
-        break
-    for j in primes:
-        if (pow(i, 2) + pow(j, 3)) > BOUND:
+from utils import profiler, sieve_of_atkin
+
+
+@profiler
+def compute() -> int:
+    """
+    Computes how many distinct numbers below 50 million can be expressed as the sum of a prime square, prime cube,
+    and prime fourth power.
+
+    The algorithm uses the Sieve of Atkin to generate prime numbers, then iterates through combinations of prime squares,
+    cubes, and fourth powers to find numbers that satisfy the condition. It returns the count of distinct numbers.
+    
+    Returns:
+    int: The count of distinct numbers below 50 million that can be expressed as the sum of a prime square, prime cube, and prime fourth power.
+    """
+    bound = 50000000 # Upper bound for the numbers we are interested in
+    limit = int((bound - (2**3) - (2**4))**0.5) # Limit for the sieve (for prime squares, cubes, and fourth powers)
+
+    # Get the list of primes using the sieve of Atkin
+    primes = sieve_of_atkin(limit)
+
+    # Set to store the distinct numbers
+    nums = set()
+
+    # Iterate over primes for square, cube, and fourth power
+    for i in primes:
+        square = pow(i, 2)
+        if square > bound:
             break
-        for k in primes:
-            p = (pow(i, 2) + pow(j, 3) + pow(k, 4))
-            if p > BOUND:
+        for j in primes:
+            cube = pow(j, 3)
+            if square + cube > bound:
                 break
-            nums.append(p)
+            for k in primes:
+                fourth_power = pow(k, 4)
+                p = square + cube + fourth_power
+                if p > bound:
+                    break
+                nums.add(p)
 
-print(len(set(nums)))
+    # Return the count of distinct numbers
+    return len(nums)
+
 
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 87: {compute()}")

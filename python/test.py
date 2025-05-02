@@ -1,21 +1,35 @@
 # pylint: disable=line-too-long
 """
-Test suite for the AoC solutions for 2024 (for now). 
-Since all our modules contain the standard entry point of if __name__ == "__main__" we can not simply run 
-the module to get our output. We also can not run the individual functions because they require variable arguments.
-So instead I will use the subprocess.run() function to read the stdout of each file in this directory and 
-compare that with the answers given by the AoC website.
+Test Suite for Project Euler Solutions
+
+This script runs tests for the Project Euler solutions, comparing their outputs against the expected results.
+Since each solution module has a standard entry point `if __name__ == "__main__"`, we can't simply run the modules directly or call the functions 
+due to their need for variable arguments. Instead, this script uses `subprocess.run()` to execute each module and capture its output, 
+which is then compared to the expected output for each problem.
 """
 
+import os
+import fnmatch
 import re
 import subprocess
 import time
-import os
-import fnmatch
+from typing import Dict
 
 
 def find_file(pattern: str, path: str) -> str:
-	"""Walk the directory for the path variable and return the file that matches the pattern"""
+	"""
+	Searches for a file in the given directory that matches the provided pattern.
+
+	This function walks through the specified directory recursively and returns 
+	the first file whose name matches the given pattern.
+
+	Args:
+		pattern (str): The pattern to match the filenames.
+		path (str): The directory path to search for files.
+
+	Returns:
+		str: The filename that matches the pattern, or an empty string if no match is found.
+	"""
 	for _, _, files in os.walk(path):
 		for name in files:
 			if fnmatch.fnmatch(name, pattern):
@@ -23,43 +37,60 @@ def find_file(pattern: str, path: str) -> str:
 	return ""
 
 
+
 def run_tests() -> None:
-	"""aa"""
-	total_time: float = 0.0 # In seconds
-	num_pass: int = 0
-	num_fail: int = 0
+    """
+    Executes the test suite for all Project Euler solutions and compares the results 
+    to the expected answers. The function uses `subprocess.run()` to run each solution 
+    and compares the output with pre-defined expected answers.
 
-	for (prob, expect_answers) in sorted(ANSWERS.items()):
-		start_time: float = time.time()
+    The results are displayed in the format:
+    - Problem number
+    - Execution time in milliseconds
+    - Pass/Fail status for each problem
 
-		# Find file in the current directory that has the following format: dayXX.py
-		module = find_file(f'p{prob:03}.py', os.getcwd())
+    Finally, it displays the total time taken and the number of tests that passed/failed.
+    """
+    total_time: float = 0.0 # Total execution time in seconds
+    num_passed: int = 0 # Counter for passed tests
+    num_failed: int = 0 # Counter for failed tests
 
-		# Run the entire file as a subprocces and pipe the output to stdout
-		output: str = subprocess.run(f'python3 {module}', check=False, capture_output=True, text=True).stdout
+    # Iterate over all problems and their expected answers
+    for problem_number, expected_answer in sorted(ANSWERS.items()):
+        start_time: float = time.time()
 
-		# Answer are always in the form: Problem X: XXXXX
-		output = re.findall(r'Problem .+:.+\n', output)
+        # Find the file corresponding to the current problem (dayXXX.py format)
+        solution_file = find_file(f'p{problem_number:03}.py', os.getcwd())
 
-		ans = output[0].split(":")[1].strip()
+        # Run the solution file as a subprocess and capture the output
+        result = subprocess.run(
+            f'python3 {solution_file}', check=False, capture_output=True, text=True
+        )
 
-		elapsed_time: float = time.time() - start_time
-		total_time += elapsed_time
+        # Parse the output for the problem's answer
+        output_lines = re.findall(r'Problem .+:.+\n', result.stdout)
+        actual_answer = output_lines[0].split(":")[1].strip()
 
-		if ans == expect_answers:
-			failstr: str = ""
-			num_pass += 1
-		else:
-			failstr = "    *** FAIL ***"
-			num_fail += 1
+        elapsed_time: float = time.time() - start_time
+        total_time += elapsed_time
 
-		print(f"\r{' '*70}\r", end="")
-		print(f"Problem {prob:03}: {int(round(elapsed_time * 1000)):7} ms{failstr}")
+        # Check if the answer matches the expected answer
+        if actual_answer == expected_answer:
+            fail_message: str = ""
+            num_passed += 1
+        else:
+            fail_message = "    *** FAIL ***"
+            num_failed += 1
 
-	print(f"Elapsed = {int(total_time)} s, Passed = {num_pass}, Failed = {num_fail}")
+        # Print the results for the current problem
+        print(f"\r{' '*70}\r", end="") # Clear the line to print on the same line
+        print(f"Problem {problem_number:03}: {int(round(elapsed_time * 1000)):7} ms{fail_message}")
+
+    # Print the overall test results
+    print(f"Elapsed = {int(total_time)} s, Passed = {num_passed}, Failed = {num_failed}")
 
 
-ANSWERS: dict[int,str] = {
+ANSWERS: Dict[int, str] = {
 	1: "233168",
 	2: "4613732",
 	3: "6857",
@@ -163,7 +194,7 @@ ANSWERS: dict[int,str] = {
 	104: "329468",
 	109: "38182",
 	112: "1587000",
-	206: "1389019170",
+	206: "1389019170"
 }
 
 

@@ -1,62 +1,68 @@
-# Starting with 1 and spiralling anticlockwise in the following way, a square spiral with side length 7 is formed.
-# It is interesting to note that the odd squares lie along the bottom right diagonal, but what is more interesting is 
-# that 8 out of the 13 numbers lying along both diagonals are prime; that is, a ratio of 8/13 ≈ 62%.
-# If one complete new layer is wrapped around the spiral above, a square spiral with side length 9 will be formed. 
-# If this process is continued, what is the side length of the square spiral for which the ratio of primes along both diagonals first falls below 10%?
-# Execution time: 10.030s
+# pylint: disable=no-name-in-module, line-too-long
+"""
+Problem 58: Spiral Primes
+
+Problem description:
+In this problem, we are tasked with finding the side length of a square spiral in which the 
+ratio of prime numbers along both diagonals first falls below 10%. 
+
+The spiral begins with the number 1 at the center, and numbers are added spirally in an 
+anticlockwise direction. For each new layer of the spiral, numbers are placed along the 
+diagonals. We need to track the prime numbers along the diagonals and stop when the ratio 
+of primes to total diagonal numbers drops below 10%.
+
+The solution computes the side length of the spiral at this point.
+
+Answer: 26241
+"""
+
+from utils import profiler, is_prime
 
 
-def is_prime(n):
+@profiler
+def compute() -> int:
     """
-    Assumes that n is a positive natural number
+    Finds the side length of the square spiral for which the ratio of primes along both 
+    diagonals first falls below 10%.
+    
+    This function simulates the growth of the spiral, checks for primes on both diagonals, 
+    and stops when the ratio of primes to total diagonal numbers is less than 10%.
+
+    Returns:
+        int: The side length of the square spiral when the ratio of primes drops below 10%.
     """
-    # We know 1 is not a prime number
-    if n == 1:
-        return False
+    c = 1 # Center value of the spiral (starting number)
+    last_num = 9 # The last number on the current spiral layer
+    width = 3 # Starting with a 3x3 spiral
 
-    i = 2
-    # This will loop from 2 to int(sqrt(x))
-    while i*i <= n:
-        # Check if i divides x without leaving a remainder
-        if n % i == 0:
-            # This means that n has a factor in between 2 and sqrt(n)
-            # So it is not a prime number
-            return False
-        i += 1
-    # If we did not find any factor in the above loop,
-    # then n is a prime number
-    return True
+    primes = 0 # Count of prime numbers on diagonals
+    total = 1 # Total numbers on diagonals (starting with the center number 1)
+
+    # Loop to generate spirals and check primes on diagonals
+    while True:
+        # Check the four diagonal numbers in the current layer of the spiral
+        if is_prime(c + width - 1):
+            primes += 1
+        if is_prime(c + 2 * (width - 1)):
+            primes += 1
+        if is_prime(c + 3 * (width - 1)):
+            primes += 1
+
+        # Four new numbers on the diagonals
+        total += 4
+
+        # Check if the ratio of primes to total numbers falls below 10%
+        if (primes / total) * 100 < 10:
+            break
+
+        # Move to the next layer of the spiral
+        width += 2
+        c = last_num
+        last_num = width**2 # The next corner number of the new layer
+
+    # Return the side length of the spiral when the prime ratio drops below 10%
+    return width
 
 
-c = 1
-last_num = 9
-width = 3
-
-primes = 0
-total = 0
-
-while True:
-    # See what numbers are along the diagonals.
-    # Fourth diagonal is never prime.
-    if is_prime(c + width - 1):
-        primes += 1
-
-    if is_prime(c + 2 * (width - 1)):
-        primes += 1
-
-    if is_prime(c + 3 * (width - 1)):
-        primes += 1
-
-    total += 4
-
-    if ((primes / total) * 100) < 10.0:
-        break
-
-    width += 2
-    c = last_num
-    last_num = width**2
-
-# Minus 2 since counted starting width double.
-print("Length of the spiral when ratio of primes is below 10%:", width - 2)
 if __name__ == "__main__":
-    print(f"Problem 1: {compute()}")
+    print(f"Problem 58: {compute()}")
