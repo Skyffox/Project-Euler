@@ -8,11 +8,11 @@ Which starting number, under one million, produces the longest chain?
 Answer: 837799
 """
 
-from functools import lru_cache
+from functools import cache
 from utils import profiler
 
 
-@lru_cache(None)  # This caches the results without a limit (None means no limit)
+@cache
 def collatz_sequence_length(n: int) -> int:
     """
     Compute the length of the Collatz sequence for a given number n.
